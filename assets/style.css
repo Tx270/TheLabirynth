@@ -1,0 +1,40 @@
+:root {
+  --size: 700px;
+  --subdiv: 25;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+}
+
+main {
+  position: absolute;
+  top: calc(50% - var(--size) / 2);
+  left: calc(50% - var(--size) / 2);
+  width: var(--size);
+  height: var(--size);
+  background-color: aqua;
+  display: flex;
+  flex-wrap: wrap;
+  line-height: 0;
+}
+
+.tile {
+  height: calc(var(--size)/var(--subdiv));
+  width: calc(var(--size)/var(--subdiv));
+}
+
+.player {
+  height: calc(var(--size)/var(--subdiv)/2);
+  width: calc(var(--size)/var(--subdiv)/2);
+  margin: calc(var(--size)/var(--subdiv)/2/2) calc(var(--size)/var(--subdiv)/2/2);;
+
+  background-color: aqua;
+  transition: 100ms ease-in;
+
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+}
