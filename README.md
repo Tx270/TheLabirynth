@@ -1,2 +1,2 @@
-# Cześć Johny.
+# Amazing Labyrinth Game!!!!!!!!!!!
 Web game for PSI lessons
