@@ -31,7 +31,7 @@ main {
   margin: calc(var(--size)/var(--subdiv)/2/2) calc(var(--size)/var(--subdiv)/2/2);;
 
   background-color: aqua;
-  transition: 100ms ease-in;
+  transition: 100ms;
 
   position: absolute;
   top: 0;
