@@ -8,13 +8,16 @@
   margin: 0;
 }
 
+body {
+  background-color: #201208;
+}
+
 main {
   position: absolute;
   top: calc(50% - var(--size) / 2);
   left: calc(50% - var(--size) / 2);
   width: var(--size);
   height: var(--size);
-  background-color: aqua;
   display: flex;
   flex-wrap: wrap;
   line-height: 0;
@@ -23,6 +26,14 @@ main {
 .tile {
   height: calc(var(--size)/var(--subdiv));
   width: calc(var(--size)/var(--subdiv));
+  
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .player {
@@ -34,7 +45,7 @@ main {
   transition: 100ms;
 
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: 25px;
+  left: 25px;
   z-index: 100;
 }
