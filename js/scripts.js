@@ -1,17 +1,25 @@
 const mazeDiv = document.getElementById("maze");
 var subdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
 const size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
+var sec, min, maze, stage = 1;
 const player = {
   x: 0,
   y: 0,
-  sprite: 0
+  sprite: document.getElementById("player")
 };
-var maze;
 
+
+function newStage() {
+  mazeDiv.innerHTML = '<div class="player" id="player"></div>';
+  player.sprite = document.getElementById("player");
+  if(stage%2) subdiv = parseInt(subdiv) + 2;
+  document.documentElement.style.setProperty("--subdiv", subdiv);
+  player.sprite.style.transition = "0ms";
+  document.getElementById("stage").innerText = ++stage;
+  draw();
+}
 
 function draw() {
-  player.sprite = document.getElementById("player");
-
   // Generate a good maze
   let m = [], s = 0;
   do {
@@ -48,7 +56,7 @@ function draw() {
   setTimeout(() => { player.sprite.style.transition = "100ms"; }, 50);
 }
 
-// Choose a random item from arr based on arr of weights
+
 function randomWeighted(items, weights) {
   const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
   const randomNum = Math.random() * totalWeight;
@@ -69,35 +77,56 @@ function viewportToIntPixels(value) {
   return side * (q/100)
 }
 
+function timer(){
+  sec = 0, min = 0;
+  var timer = setInterval(function(){
+    if (stop === true) {
+      clearInterval(timer);
+      stop = false;
+    }
+    sec++;
+    if(sec == 60) {
+      sec = 0;
+      min++;
+    }
+    if(sec < 10) { document.getElementById('timer').innerHTML=min+':0'+sec; }
+    else { document.getElementById('timer').innerHTML=min+':'+sec; }
+  }, 1000);
+}
 
-// Bind player movement
+function bindPlayerMovment() {
+  Mousetrap.bind(["down", "s", "up", "w", "right", "d", "left", "a"], () => { 
+    timer();
+    Mousetrap.unbind(["down", "s", "up", "w", "right", "d", "left", "a"]);
+  })
+  
+  Mousetrap.bind(["down", "s"], () => {
+    if (player.y < subdiv && maze[player.y + 1]?.[player.x] === 1) {
+      player.sprite.style.top = ++player.y * (size/subdiv) + "px";
+    } else if (player.y < subdiv && maze[player.y + 1]?.[player.x] === 2) {
+      newStage();
+    }
+  }, 'keyup');
+  
+  Mousetrap.bind(["up", "w"], () => {
+    if (player.y > 0 && maze[player.y - 1]?.[player.x] === 1) {
+      player.sprite.style.top = --player.y * (size/subdiv) + "px";
+    }
+  }, 'keyup');
+  
+  Mousetrap.bind(["right", "d"], () => {
+    if (player.x < subdiv && maze[player.y]?.[player.x + 1] === 1) {
+    player.sprite.style.left = ++player.x * (size/subdiv) + "px";
+    }
+  }, 'keyup');
+  
+  Mousetrap.bind(["left", "a"], () => {
+    if (player.x > 0 && maze[player.y]?.[player.x - 1] === 1) {
+      player.sprite.style.left = --player.x * (size/subdiv) + "px";
+    }
+  }, 'keyup');
+}
 
-Mousetrap.bind(["down", "s"], () => {
-  if (player.y < subdiv && maze[player.y + 1]?.[player.x] === 1) {
-  player.sprite.style.top = ++player.y * (size/subdiv) + "px";
-  } else if (player.y < subdiv && maze[player.y + 1]?.[player.x] === 2) {
-  mazeDiv.innerHTML = '<div class="player" id="player"></div>';
-  subdiv = parseInt(subdiv) + 2;
-  document.documentElement.style.setProperty("--subdiv", subdiv);
-  player.sprite.style.transition = "0ms";
-  draw();
-  }
-}, 'keyup');
 
-Mousetrap.bind(["up", "w"], () => {
-  if (player.y > 0 && maze[player.y - 1]?.[player.x] === 1) {
-  player.sprite.style.top = --player.y * (size/subdiv) + "px";
-  }
-}, 'keyup');
-
-Mousetrap.bind(["right", "d"], () => {
-  if (player.x < subdiv && maze[player.y]?.[player.x + 1] === 1) {
-  player.sprite.style.left = ++player.x * (size/subdiv) + "px";
-  }
-}, 'keyup');
-
-Mousetrap.bind(["left", "a"], () => {
-  if (player.x > 0 && maze[player.y]?.[player.x - 1] === 1) {
-  player.sprite.style.left = --player.x * (size/subdiv) + "px";
-  }
-}, 'keyup');
+bindPlayerMovment();
+draw();

@@ -3,6 +3,8 @@
   --size: 75vh;
   /* Start maze tile number. MUST BE ODD */
   --subdiv: 11;
+  --color: #929992;
+  --bc-color: #201208;
 }
 
 @font-face {
@@ -17,11 +19,21 @@
 }
 
 body {
-  background-color: #201208;
+  background-color: var(--bc-color);
+  color: var(--color);
   display: grid;
   grid-template-columns: auto calc(var(--size) + 10vw) auto;
   height: 100vh;
+  overflow: hidden;
 }
+
+/* Three columnes styling: */
+
+/* firs column */
+
+
+/* ########################################################################################################################## */
+
 
 #maze {
   position: relative;
@@ -35,7 +47,6 @@ body {
 }
 
 .tile, .player {
-  /* filter: brightness(0) saturate(100%) invert(55%) sepia(91%) saturate(291%) hue-rotate(350deg) brightness(91%) contrast(86%);   */
   height: calc(var(--size)/var(--subdiv));
   width: calc(var(--size)/var(--subdiv));
   
@@ -59,6 +70,23 @@ body {
   width: 100%;
   height: calc(var(--size) / 4);
   line-height: calc(var(--size) / 4);
-  color: #929992;
   text-align: center;
+}
+
+
+/* ########################################################################################################################## */
+
+
+#data {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 50px;
+}
+
+#data p {
+  width: 300px;
+  font-size: 50px;
+  padding-top: 10px;
 }
