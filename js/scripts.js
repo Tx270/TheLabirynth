@@ -14,8 +14,11 @@ function init() {
   player.sprite.style.left = `${parseInt(window.getComputedStyle(player.sprite).left) || 0}px`;
 
   bindKeys();
+  draw();
+}
+
+function draw() {
   maze = new MazeBuilder(12, 12).maze;
-  console.log(maze.map(row => row.join(", ")).join("\n"));
 
   maze.forEach(row => {
     row.forEach(tile => {
@@ -24,20 +27,19 @@ function init() {
 
       switch (tile) {
         case 0:
-          e.style.backgroundColor = "red";
+          e.style.backgroundImage = "url('assets/tiles/wall" + randomWeighted([...Array(7).keys()], [20,15,10,3,3,3,3]) + ".png')";
           break;
         case 1:
-          e.style.backgroundColor = "white";
+          
           break;
         case 2:
-          e.style.backgroundColor = "blue"
+          e.style.backgroundImage = "url('assets/tiles/door.png')";
       }
 
       main.appendChild(e);
     });
   });
 }
-
 
 function findPairs(n) {
   let pairs = [];
@@ -50,6 +52,19 @@ function findPairs(n) {
     }
   }
   console.log(pairs);
+}
+
+function randomWeighted(items, weights) {
+  const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+  const randomNum = Math.random() * totalWeight;
+
+  let cumulativeWeight = 0;
+  for (let i = 0; i < items.length; i++) {
+      cumulativeWeight += weights[i];
+      if (randomNum < cumulativeWeight) {
+          return items[i];
+      }
+  }
 }
 
 function bindKeys() {
