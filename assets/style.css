@@ -1,29 +1,41 @@
 :root {
-  --size: 700px;
+  /* Maze size */
+  --size: 75vh;
+  /* Start maze tile number. MUST BE ODD */
   --subdiv: 11;
 }
 
+@font-face {
+  font-family: 'pixelon';
+  src: url('Pixelon-OGALo.ttf');
+}
+
 * {
+  font-family: pixelon;
   padding: 0;
   margin: 0;
 }
 
 body {
   background-color: #201208;
+  display: grid;
+  grid-template-columns: auto calc(var(--size) + 10vw) auto;
+  height: 100vh;
 }
 
-main {
-  position: absolute;
-  top: calc(50% - var(--size) / 2);
-  left: calc(50% - var(--size) / 2);
+#maze {
+  position: relative;
   width: var(--size);
   height: var(--size);
+  margin-left: 5vw;
+  margin-right: 5vw;
   display: flex;
   flex-wrap: wrap;
   line-height: 0;
 }
 
-.tile {
+.tile, .player {
+  /* filter: brightness(0) saturate(100%) invert(55%) sepia(91%) saturate(291%) hue-rotate(350deg) brightness(91%) contrast(86%);   */
   height: calc(var(--size)/var(--subdiv));
   width: calc(var(--size)/var(--subdiv));
   
@@ -37,15 +49,16 @@ main {
 }
 
 .player {
-  height: calc(var(--size)/var(--subdiv)/2);
-  width: calc(var(--size)/var(--subdiv)/2);
-  margin: calc(var(--size)/var(--subdiv)/2/2) calc(var(--size)/var(--subdiv)/2/2);;
-
-  background-color: aqua;
-  transition: 100ms;
-
+  background-image: url('player.png');
   position: absolute;
-  top: 0;
-  left: 0;
   z-index: 100;
+}
+
+#logo {
+  font-size: 10vh;
+  width: 100%;
+  height: calc(var(--size) / 4);
+  line-height: calc(var(--size) / 4);
+  color: #929992;
+  text-align: center;
 }
