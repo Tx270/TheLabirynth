@@ -1,6 +1,6 @@
 :root {
   --size: 700px;
-  --subdiv: 25;
+  --subdiv: 11;
 }
 
 * {
@@ -45,7 +45,7 @@ main {
   transition: 100ms;
 
   position: absolute;
-  top: 25px;
-  left: 25px;
+  top: 0;
+  left: 0;
   z-index: 100;
 }

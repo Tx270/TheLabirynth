@@ -243,38 +243,38 @@ class MazeBuilder {
   
     }
   
-    display(id) {
+    display() { //id
+      console.log(this.maze.map(row => row.join(", ")).join("\n"));
+      // this.parentDiv = document.getElementById(id);
   
-      this.parentDiv = document.getElementById(id);
+      // if(!this.parentDiv) {
+      //   alert("Cannot initialise maze - no element found with id \"" + id + "\"");
+      //   return false;
+      // }
   
-      if(!this.parentDiv) {
-        alert("Cannot initialise maze - no element found with id \"" + id + "\"");
-        return false;
-      }
+      // while(this.parentDiv.firstChild) {
+      //   this.parentDiv.removeChild(this.parentDiv.firstChild);
+      // }
   
-      while(this.parentDiv.firstChild) {
-        this.parentDiv.removeChild(this.parentDiv.firstChild);
-      }
+      // const container = document.createElement("div");
+      // container.id = "maze";
+      // container.dataset.steps = this.totalSteps;
   
-      const container = document.createElement("div");
-      container.id = "maze";
-      container.dataset.steps = this.totalSteps;
+      // this.maze.forEach((row) => {
+      //   let rowDiv = document.createElement("div");
+      //   row.forEach((cell) => {
+      //     let cellDiv = document.createElement("div");
+      //     if(cell) {
+      //       cellDiv.className = cell.join(" ");
+      //     }
+      //     rowDiv.appendChild(cellDiv);
+      //   });
+      //   container.appendChild(rowDiv);
+      // });
   
-      this.maze.forEach((row) => {
-        let rowDiv = document.createElement("div");
-        row.forEach((cell) => {
-          let cellDiv = document.createElement("div");
-          if(cell) {
-            cellDiv.className = cell.join(" ");
-          }
-          rowDiv.appendChild(cellDiv);
-        });
-        container.appendChild(rowDiv);
-      });
+      // this.parentDiv.appendChild(container);
   
-      this.parentDiv.appendChild(container);
-  
-      return true;
+      // return true;
     }
   
   }
