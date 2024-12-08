@@ -22,14 +22,42 @@ body {
   background-color: var(--bc-color);
   color: var(--color);
   display: grid;
-  grid-template-columns: auto calc(var(--size) + 10vw) auto;
+  grid-template-columns: calc((100vw - var(--size) - 10vw)/2) calc(var(--size) + 10vw) calc((100vw - var(--size) - 10vw)/2);
   height: 100vh;
   overflow: hidden;
 }
 
 /* Three columnes styling: */
 
-/* firs column */
+#leaderboardDiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#leaderboard thead {
+  font-weight: 900;
+}
+
+#leaderboard {
+  position: relative;
+  height: 54vh;
+  width: 100%; 
+  table-layout: fixed;
+  width: auto;
+  border-collapse: collapse;
+  width: 80%;
+  font-size: 20px;
+}
+
+th, td {
+  text-align: center;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+#leaderboardBody>tr:last-child>th {
+  border-bottom: 0;
+}
 
 
 /* ########################################################################################################################## */
@@ -77,7 +105,7 @@ body {
 /* ########################################################################################################################## */
 
 
-#data {
+#dataDiv {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -85,7 +113,7 @@ body {
   font-size: 50px;
 }
 
-#data p {
+#dataDiv p {
   width: 300px;
   font-size: 50px;
   padding-top: 10px;
