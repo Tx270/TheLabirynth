@@ -1,6 +1,6 @@
 const mazeDiv = document.getElementById("maze");
 var subdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
-const size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
+var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
 var sec, min, maze, stage = 1, entrancePos = 3;
 const player = {
   x: 0,
@@ -193,3 +193,9 @@ function bindPlayerMovment() {
 
 bindPlayerMovment();
 draw(true);
+
+window.addEventListener("resize", () => {
+  size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
+  player.sprite.style.top = player.y * (size/subdiv) + "px";
+  player.sprite.style.left = player.x * (size/subdiv) + "px";
+});
