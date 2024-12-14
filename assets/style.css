@@ -87,10 +87,20 @@ th, td {
   background-position: center;
 }
 
+.tile {
+  transition: background-image 20ms;
+}
+
 .player {
   background-image: url('player.png');
   position: absolute;
-  z-index: 100;
+  z-index: -10;
+  opacity: 0;
+}
+
+#key, .coin {
+  z-index: -20;
+  transition: 100ms;
 }
 
 #logo {
