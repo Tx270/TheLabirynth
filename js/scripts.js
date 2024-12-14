@@ -138,59 +138,65 @@ function timer(){
   }, 1000);
 }
 
+function preloadTextures() {
+  const textures = [
+    "assets/tiles/door_closing.gif",
+    "assets/tiles/door_closed.png",
+    "assets/tiles/door_opening.gif",
+    "assets/tiles/door_open.png"
+  ];
+
+  textures.forEach(texture => {
+      const img = new Image();
+      img.src = texture;
+  });
+}
+
 function bindPlayerMovment() {
-  // one time bind to start the timer
+  // Jednorazowe przypisanie timera
   Mousetrap.bind(["down", "s", "up", "w", "right", "d", "left", "a"], () => { 
     timer();
     Mousetrap.unbind(["down", "s", "up", "w", "right", "d", "left", "a"]);
-  })
+  });
 
   function checkSpecial() {
-    let pos = maze[player.y][player.x];
+    const pos = maze[player.y][player.x];
     if (pos === 4) {
-      maze[maze.length-1][maze[maze.length-1].findIndex((e) => e == 3)] = 6;
+      maze[maze.length - 1][maze[maze.length - 1].findIndex((e) => e === 3)] = 6;
       document.getElementById("key").style.opacity = "0";
-      document.getElementById("door").style.backgroundImage = "url('assets/tiles/door_opening.gif')";
-      setTimeout(() => { document.getElementById("door").style.backgroundImage = "url('assets/tiles/door_open.png')"; }, 800);
-    }
-    if (pos === 6 && key) {
+      const door = document.getElementById("door");
+      door.style.backgroundImage = "url('assets/tiles/door_opening.gif')";
+      setTimeout(() => { 
+        door.style.backgroundImage = "url('assets/tiles/door_open.png')"; 
+      }, 800);
+    } else if (pos === 6 && key) {
       player.sprite.style.opacity = "0";
-      player.sprite.style.transition = "200ms"
+      player.sprite.style.transition = "200ms";
       setTimeout(newStage, 200);
     }
   }
 
-  let empty_tile_types = [1, 4, 5, 6];
-  
-  Mousetrap.bind(["down", "s"], () => {
-    if (empty_tile_types.includes(player.y < subdiv && maze[player.y + 1]?.[player.x])) {
-      player.sprite.style.top = ++player.y * (size/subdiv) + "px";
+  function movePlayer(dx, dy) {
+    const newX = player.x + dx;
+    const newY = player.y + dy;
+
+    if ( newX >= 0 && newX < subdiv && newY >= 0 && newY < subdiv && [1, 4, 5, 6].includes(maze[newY]?.[newX]) ) {
+      player.x = newX;
+      player.y = newY;
+      player.sprite.style.top = player.y * (size / subdiv) + "px";
+      player.sprite.style.left = player.x * (size / subdiv) + "px";
       checkSpecial();
     }
-  }, 'keyup');
+  }
   
-  Mousetrap.bind(["up", "w"], () => {
-    if (empty_tile_types.includes(player.y > 0 && maze[player.y - 1]?.[player.x])) {
-      player.sprite.style.top = --player.y * (size/subdiv) + "px";
-      checkSpecial();
-    }
-  }, 'keyup');
-  
-  Mousetrap.bind(["right", "d"], () => {
-    if (empty_tile_types.includes(player.x < subdiv && maze[player.y]?.[player.x + 1])) {
-      player.sprite.style.left = ++player.x * (size/subdiv) + "px";
-      checkSpecial();
-    }
-  }, 'keyup');
-  
-  Mousetrap.bind(["left", "a"], () => {
-    if (empty_tile_types.includes(player.x > 0 && maze[player.y]?.[player.x - 1])) {
-      player.sprite.style.left = --player.x * (size/subdiv) + "px";
-      checkSpecial();
-    }
-  }, 'keyup');
+  Mousetrap.bind(["down", "s"], () => movePlayer(0, 1), 'keyup');
+  Mousetrap.bind(["up", "w"], () => movePlayer(0, -1), 'keyup');
+  Mousetrap.bind(["right", "d"], () => movePlayer(1, 0), 'keyup');
+  Mousetrap.bind(["left", "a"], () => movePlayer(-1, 0), 'keyup');
 }
 
+
+preloadTextures();
 bindPlayerMovment();
 draw(true);
 

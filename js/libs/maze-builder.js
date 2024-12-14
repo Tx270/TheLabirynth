@@ -41,7 +41,6 @@ class MazeBuilder {
   
     if(r == 0) {
       /* place ent in top row */
-      console.log(this.entrancePos)
       let doorPos = this.posToSpace(this.entrancePos);
       this.maze[r][doorPos] = 2;
     }
