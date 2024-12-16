@@ -22,7 +22,7 @@ body {
   background-color: var(--bc-color);
   color: var(--color);
   display: grid;
-  grid-template-columns: calc((100vw - var(--size) - 10vw)/2) calc(var(--size) + 10vw) calc((100vw - var(--size) - 10vw)/2);
+  grid-template-columns: calc(((100vw - var(--size) - 10vw)/7)*4) calc(var(--size) + 10vw) calc(((100vw - var(--size) - 10vw)/7)*3);
   height: 100vh;
   overflow: hidden;
 }
@@ -33,6 +33,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
 }
 #leaderboard thead {
   font-weight: 900;
@@ -45,8 +46,9 @@ body {
   table-layout: fixed;
   width: auto;
   border-collapse: collapse;
-  width: 80%;
-  font-size: 20px;
+  width: 90%;
+  font-size: 25px;
+  margin-left: 30px;
 }
 
 th, td {
@@ -55,7 +57,7 @@ th, td {
   border-bottom: 1px solid #ddd;
 }
 
-#leaderboardBody>tr:last-child>th {
+#leaderboardBody>tr:last-child>td {
   border-bottom: 0;
 }
 

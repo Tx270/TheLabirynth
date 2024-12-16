@@ -1,0 +1,1 @@
+SELECT * FROM thelabyrinth ORDER BY score DESC LIMIT 10;

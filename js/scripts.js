@@ -5,7 +5,8 @@ var sec, min, maze, stage = 1, entrancePos = 3;
 const player = {
   x: 0,
   y: 0,
-  sprite: document.getElementById("player")
+  sprite: document.getElementById("player"),
+  username: "defult"
 };
 
 
@@ -99,6 +100,7 @@ function draw(first = false) {
 
 }
 
+// ####################################################
 
 function randomTileNumberWeighted() {
   const weights = [20,15,10,3,3,3,3];
@@ -193,15 +195,73 @@ function bindPlayerMovment() {
   Mousetrap.bind(["up", "w"], () => movePlayer(0, -1), 'keyup');
   Mousetrap.bind(["right", "d"], () => movePlayer(1, 0), 'keyup');
   Mousetrap.bind(["left", "a"], () => movePlayer(-1, 0), 'keyup');
+
+  window.addEventListener("resize", () => {
+    size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
+    player.sprite.style.top = player.y * (size/subdiv) + "px";
+    player.sprite.style.left = player.x * (size/subdiv) + "px";
+  });
 }
 
+// ####################################################
+
+async function fetchData(params) {
+  try {
+    const response = await fetch(`${window.location.protocol}//${window.location.hostname}/php/db.php?${new URLSearchParams(params)}`);
+    return await response.json();
+  } catch (err) {
+    console.error('Błąd przy pobieraniu danych:', err);
+    document.getElementById('leaderboardDiv').innerHTML = "Connection to the <br> database failed";
+    document.getElementById('leaderboardDiv').style.fontSize = "30px";
+    return null;
+  }
+}
+
+function createRow({ place, username, score }, index, isCurrentUser) {
+  const row = document.createElement('tr');
+  row.innerHTML = `
+    <td>${place || index + 1}</td>
+    <td colspan="3">${username}</td>
+    <td>${score}</td>
+  `;
+  if (isCurrentUser) {
+    row.style.fontWeight = "900";
+  }
+  return row;
+}
+
+async function writeScore() {
+  const scoresTop = await fetchData({ mode: 'top' });
+  const scoresProx = await fetchData({ username: player.username, mode: 'prox' });
+  const tbody = document.getElementById('leaderboardBody');
+  tbody.innerHTML = '';
+
+  const appendScores = (scores, userPlace) => {
+    scores.forEach((score, index) => {
+      const isCurrentUser = score.username === player.username;
+      tbody.appendChild(createRow(score, index, isCurrentUser));
+    });
+  };
+
+  if (scoresProx && scoresProx.length > 7) {
+    appendScores(scoresProx, true);
+  } else if (!scoresProx || scoresProx.length === 0) {
+    const fullTopScores = await fetchData({ mode: 'topten' });
+    appendScores(fullTopScores, false);
+  } else {
+    appendScores(scoresTop, false);
+    const blankRow = document.createElement('tr');
+    blankRow.innerHTML = '<td colspan="5">&#8226; &#8226; &#8226; &#8226;</td>';
+    tbody.appendChild(blankRow);
+    appendScores(scoresProx, true);
+  }
+}
+
+// TODO: add cant connect to db screen
+
+// ####################################################
 
 preloadTextures();
+writeScore();
 bindPlayerMovment();
 draw(true);
-
-window.addEventListener("resize", () => {
-  size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
-  player.sprite.style.top = player.y * (size/subdiv) + "px";
-  player.sprite.style.left = player.x * (size/subdiv) + "px";
-});
