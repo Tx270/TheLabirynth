@@ -1,7 +1,6 @@
-const mazeDiv = document.getElementById("maze");
-var subdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
+var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
-var sec, min, maze, stage = 1, entrancePos = 3;
+var stop = false, maze, stage = 1, maxStage = 1, entrancePos = 3, subdiv = defSubdiv;
 const player = {
   x: 0,
   y: 0,
@@ -10,17 +9,28 @@ const player = {
 };
 
 
-function newStage() {
-  mazeDiv.innerHTML = '<div class="player" id="player"></div>';
+async function newStage() {
+  document.getElementById("maze").innerHTML = '<div class="player" id="player"></div>';
   player.sprite = document.getElementById("player");
-  if(stage%2) {
-    subdiv = parseInt(subdiv) + 2;
-    entrancePos++;
-  }
-  document.documentElement.style.setProperty("--subdiv", subdiv);
   player.sprite.style.transition = "0ms";
-  document.getElementById("stage").innerText = ++stage;
-  draw();
+
+  if(stage != maxStage || true) {
+    if(stage%2) {
+      subdiv = parseInt(subdiv) + 2;
+      entrancePos++;
+      document.documentElement.style.setProperty("--subdiv", subdiv);
+    }
+    stage++;
+    document.getElementById("stage").innerText = stage;
+    draw();
+  } else {
+    await fetchData({ score: ((min*60)+sec), username: player.username, mode: 'add' });
+    await writeScore();
+    subdiv = defSubdiv;
+    document.documentElement.style.setProperty("--subdiv", subdiv);
+    draw(true);
+    setTimeout(endModal, 200);
+  }
 }
 
 function draw(first = false) {
@@ -73,7 +83,7 @@ function draw(first = false) {
         break;
     }
 
-    mazeDiv.appendChild(e);
+    document.getElementById("maze").appendChild(e);
   });
   });
 
@@ -124,7 +134,7 @@ function viewportToIntPixels(value) {
 }
 
 function timer(){
-  sec = 0, min = 0;
+  var sec = 0, min = 0;
   var timer = setInterval(function(){
     if (stop === true) {
       clearInterval(timer);
@@ -203,6 +213,27 @@ function bindPlayerMovment() {
   });
 }
 
+function startModal() {
+  let p;
+  do {
+    p = prompt("Please enter your username:", "");
+  } while (!p || p.includes(" "));
+  player.username = p;
+}
+
+function endModal() {
+  alert(`Congratuletions! You clered ${maxStage} stages in ${min} minutes and ${sec} seconds!`);
+  stage = 0;
+  stop = true;
+  entrancePos = 3;
+}
+
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${minutes}:${secs.toString().padStart(2, '0')}`;
+};
+
 // ####################################################
 
 async function fetchData(params) {
@@ -215,19 +246,6 @@ async function fetchData(params) {
     document.getElementById('leaderboardDiv').style.fontSize = "30px";
     return null;
   }
-}
-
-function createRow({ place, username, score }, index, isCurrentUser) {
-  const row = document.createElement('tr');
-  row.innerHTML = `
-    <td>${place || index + 1}</td>
-    <td colspan="3">${username}</td>
-    <td>${score}</td>
-  `;
-  if (isCurrentUser) {
-    row.style.fontWeight = "900";
-  }
-  return row;
 }
 
 async function writeScore() {
@@ -243,6 +261,19 @@ async function writeScore() {
     });
   };
 
+  const createRow = ({ place, username, score }, index, isCurrentUser) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${place || index + 1}</td>
+      <td colspan="3">${username}</td>
+      <td>${formatTime(score)}</td>
+    `;
+    if (isCurrentUser) {
+      row.style.fontWeight = "900";
+    }
+    return row;
+  };  
+
   if (scoresProx && scoresProx.length > 7) {
     appendScores(scoresProx, true);
   } else if (!scoresProx || scoresProx.length === 0) {
@@ -257,11 +288,13 @@ async function writeScore() {
   }
 }
 
-// TODO: add cant connect to db screen
-
 // ####################################################
 
-preloadTextures();
-writeScore();
-bindPlayerMovment();
-draw(true);
+function init() {
+  preloadTextures();
+  writeScore();
+  bindPlayerMovment();
+  draw(true);
+}
+
+init();

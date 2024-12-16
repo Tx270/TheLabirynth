@@ -1,5 +1,5 @@
 WITH posortowane AS (
-    SELECT ROW_NUMBER() OVER (ORDER BY score DESC) AS place, username, score, date
+    SELECT ROW_NUMBER() OVER (ORDER BY score ASC) AS place, username, score, date
     FROM thelabyrinth
 ),
 plc AS (
