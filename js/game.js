@@ -179,6 +179,10 @@ function bindPlayerMovment() {
     Mousetrap.unbind(["down", "s", "up", "w", "right", "d", "left", "a", "2", "5", "3", "1"]);
   });
 
+  // Mousetrap.bind('n o c l i p', function() {
+  //   alert('no clip mode activated');
+  // });
+
   function checkSpecial() {
     const pos = maze[player.y][player.x];
     if (pos === 4) {
@@ -335,9 +339,10 @@ switch (file) {
   case "replay":
     document.getElementById('username').value = player.username;
     document.getElementById('time').innerText = formatTime(score);
-    console.log(score);
     writeScore();
+    break;
   case "play":
     document.getElementById("maxStage").innerText = maxStage;
     document.getElementById("username").value = Cookies.get('username') ?? "";
+    break;
 }
