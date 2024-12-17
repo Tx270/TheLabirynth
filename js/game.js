@@ -7,7 +7,7 @@ const player = {
   sprite: document.getElementById("player"),
   username: "defult"
 };
-player.username = usr ?? player.username;
+if(typeof usr !== "undefined") { player.username = usr; }
 
 
 async function newStage() {
@@ -247,6 +247,7 @@ function validateUsername() {
     alert("Your nickname must be less than 30 characters");
     return false;
   }
+  Cookies.set('username', x);
 }
 
 // ####################################################
@@ -318,4 +319,5 @@ switch (file) {
     writeScore();
   case "play":
     document.getElementById("maxStage").innerText = maxStage;
+    document.getElementById("username").value = Cookies.get('username') ?? "";
 }
