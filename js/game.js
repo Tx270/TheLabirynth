@@ -5,8 +5,9 @@ const player = {
   x: 0,
   y: 0,
   sprite: document.getElementById("player"),
-  username: usr
+  username: "defult"
 };
+player.username = usr ?? player.username;
 
 
 async function newStage() {
@@ -234,7 +235,19 @@ function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${minutes}:${secs.toString().padStart(2, '0')}`;
-};
+}
+
+function validateUsername() {
+  let x = document.forms["startForm"]["username"].value;
+  if (!/^[A-Za-z0-9]+$/.test(x)) {
+    alert("Your nickname must contain only letters and numbers");
+    return false;
+  }
+  if (x.length > 30) {
+    alert("Your nickname must be less than 30 characters");
+    return false;
+  }
+}
 
 // ####################################################
 
