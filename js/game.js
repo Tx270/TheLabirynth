@@ -1,4 +1,5 @@
 var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
+let numofbc = 0;
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
 var startTime, stop = false, maze, stage = 1, maxStage = 3, entrancePos = 3, subdiv = defSubdiv;
 const player = {
@@ -11,6 +12,7 @@ if(typeof usr !== "undefined") { player.username = usr; }
 
 
 async function newStage() {
+  numofbc = 0;
   document.getElementById("maze").innerHTML = '<div class="player" id="player"></div>';
   player.sprite = document.getElementById("player");
   player.sprite.style.transition = "0ms";
@@ -32,6 +34,7 @@ async function newStage() {
     document.getElementById("username").value = player.username;
     document.getElementById("score").value = scr;
     document.getElementById("fr").submit();
+  
   }
 }
 
@@ -86,6 +89,7 @@ function draw(first = false) {
     }
 
     document.getElementById("maze").appendChild(e);
+    
   });
   });
 
@@ -169,10 +173,10 @@ function preloadTextures() {
 
 function bindPlayerMovment() {
   // Jednorazowe przypisanie timera
-  Mousetrap.bind(["down", "s", "up", "w", "right", "d", "left", "a"], () => {
+  Mousetrap.bind(["down", "s", "up", "w", "right", "d", "left", "a", "2", "5", "3", "1"], () => {
     startTime = Math.round(Date.now() / 1000);
     timer();
-    Mousetrap.unbind(["down", "s", "up", "w", "right", "d", "left", "a"]);
+    Mousetrap.unbind(["down", "s", "up", "w", "right", "d", "left", "a", "2", "5", "3", "1"]);
   });
 
   function checkSpecial() {
@@ -204,11 +208,21 @@ function bindPlayerMovment() {
       checkSpecial();
     }
   }
-  
+
+  function dziecoBomby(dx, dy){
+    if(numofbc === 0)
+    maze[player.y + dy][player.x + dx] = 1;
+    numofbc = 1;
+}
   Mousetrap.bind(["down", "s"], () => movePlayer(0, 1), 'keyup');
   Mousetrap.bind(["up", "w"], () => movePlayer(0, -1), 'keyup');
   Mousetrap.bind(["right", "d"], () => movePlayer(1, 0), 'keyup');
   Mousetrap.bind(["left", "a"], () => movePlayer(-1, 0), 'keyup');
+
+  Mousetrap.bind(["2"], () => dziecoBomby(0, 1), 'keydown');
+  Mousetrap.bind(["5"], () => dziecoBomby(0, -1), 'keydown');
+  Mousetrap.bind(["3"], () => dziecoBomby(1, 0), 'keydown');
+  Mousetrap.bind(["1"], () => dziecoBomby(-1, 0), 'keydown');
 
   window.addEventListener("resize", () => {
     size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
