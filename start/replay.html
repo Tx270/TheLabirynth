@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Labyrinth</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <script> const file = "replay"; </script>
+  <script src="/js/game.js" defer></script>
+  <link rel="shortcut icon" href="/assets/player.png" type="image/x-icon">
+</head>
+<body>
+  <form action="/" method="POST" id="startForm">
+
+    <h1>Your time is <span id="time"></span></h1>
+    <input type="hidden" name="username" id="username">
+    <button type="submit">Try Again</button>
+
+    <table id="leaderboard">
+      <thead>
+        <tr>
+        <th>Place</th>
+        <th></th>
+        <th>Player</th>
+        <th></th>
+        <th>Time</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboardBody">
+      </tbody>  
+    </table>
+  </form>
+</body>
+</html>

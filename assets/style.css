@@ -14,41 +14,66 @@
 
 * {
   font-family: pixelon;
+  color: var(--color);
   padding: 0;
   margin: 0;
 }
 
 body {
   background-color: var(--bc-color);
-  color: var(--color);
+  height: 100vh;
+}
+
+main {
   display: grid;
-  grid-template-columns: calc(((100vw - var(--size) - 10vw)/7)*4) calc(var(--size) + 10vw) calc(((100vw - var(--size) - 10vw)/7)*3);
+  grid-template-columns: calc((100vw - var(--size) - 10vw)/2) calc(var(--size) + 10vw) calc((100vw - var(--size) - 10vw)/2);
   height: 100vh;
   overflow: hidden;
 }
 
-/* Three columnes styling: */
-
-#leaderboardDiv {
+#startForm {
+  height: 100%;
+  width: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  text-align: center;
+  justify-content: center;
+  flex-direction: column;
 }
-#leaderboard thead {
-  font-weight: 900;
+
+#startForm button, form input {
+  width: 20%;
+  background-color: var(--bc-color);
+  border: solid var(--color) 2px;
+  font-size: 20px;
+  padding: 10px;
+  transition: 100ms;
+  cursor: pointer;
+
+  margin-bottom: 70px;
+}
+#startForm button:hover {
+  border: solid #686b68 2px;
+}
+
+#startForm h1 {
+  margin-bottom: 20px;
+}
+#startForm h3 {
+  position: relative;
+  top: -40px;
 }
 
 #leaderboard {
   position: relative;
   height: 54vh;
-  width: 100%; 
+  width: 40%; 
   table-layout: fixed;
-  width: auto;
   border-collapse: collapse;
-  width: 90%;
   font-size: 25px;
-  margin-left: 30px;
+}
+
+#leaderboard thead {
+  font-weight: 900;
 }
 
 th, td {

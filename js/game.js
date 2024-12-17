@@ -1,11 +1,11 @@
 var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
-var stop = false, maze, stage = 1, maxStage = 1, entrancePos = 3, subdiv = defSubdiv;
+var startTime, stop = false, maze, stage = 1, maxStage = 3, entrancePos = 3, subdiv = defSubdiv;
 const player = {
   x: 0,
   y: 0,
   sprite: document.getElementById("player"),
-  username: "defult"
+  username: usr
 };
 
 
@@ -14,7 +14,7 @@ async function newStage() {
   player.sprite = document.getElementById("player");
   player.sprite.style.transition = "0ms";
 
-  if(stage != maxStage || true) {
+  if(stage != maxStage) {
     if(stage%2) {
       subdiv = parseInt(subdiv) + 2;
       entrancePos++;
@@ -24,12 +24,13 @@ async function newStage() {
     document.getElementById("stage").innerText = stage;
     draw();
   } else {
-    await fetchData({ score: ((min*60)+sec), username: player.username, mode: 'add' });
-    await writeScore();
-    subdiv = defSubdiv;
-    document.documentElement.style.setProperty("--subdiv", subdiv);
-    draw(true);
-    setTimeout(endModal, 200);
+    stop = true;
+    let scr = Math.round(Date.now() / 1000)-startTime;
+    await fetchData({ score: scr, username: player.username, mode: 'add' });
+
+    document.getElementById("username").value = player.username;
+    document.getElementById("score").value = scr;
+    document.getElementById("fr").submit();
   }
 }
 
@@ -166,7 +167,8 @@ function preloadTextures() {
 
 function bindPlayerMovment() {
   // Jednorazowe przypisanie timera
-  Mousetrap.bind(["down", "s", "up", "w", "right", "d", "left", "a"], () => { 
+  Mousetrap.bind(["down", "s", "up", "w", "right", "d", "left", "a"], () => {
+    startTime = Math.round(Date.now() / 1000);
     timer();
     Mousetrap.unbind(["down", "s", "up", "w", "right", "d", "left", "a"]);
   });
@@ -242,8 +244,8 @@ async function fetchData(params) {
     return await response.json();
   } catch (err) {
     console.error('Błąd przy pobieraniu danych:', err);
-    document.getElementById('leaderboardDiv').innerHTML = "Connection to the <br> database failed";
-    document.getElementById('leaderboardDiv').style.fontSize = "30px";
+    document.getElementById('leaderboard').innerHTML = "Connection to the <br> database failed";
+    document.getElementById('leaderboard').style.fontSize = "30px";
     return null;
   }
 }
@@ -290,11 +292,17 @@ async function writeScore() {
 
 // ####################################################
 
-function init() {
-  preloadTextures();
-  writeScore();
-  bindPlayerMovment();
-  draw(true);
+switch (file) {
+  case "game":
+    preloadTextures();
+    bindPlayerMovment();
+    draw(true);
+    break;
+  case "replay":
+    document.getElementById('username').value = player.username;
+    document.getElementById('time').innerText = formatTime(score);
+    console.log(score);
+    writeScore();
+  case "play":
+    document.getElementById("maxStage").innerText = maxStage;
 }
-
-init();

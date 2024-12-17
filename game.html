@@ -1,0 +1,25 @@
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Labyrinth</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <script> const file = "game"; </script>
+  <script src="/js/libs/maze-builder.js"></script>
+  <script src="/js/libs/mousetrap.min.js"></script>
+  <script src="/js/game.js" defer></script>
+  <link rel="shortcut icon" href="/assets/player.png" type="image/x-icon">
+</head>
+<body>
+  <form action="/start/" method="POST" id="fr"><input type="hidden" name="username" id="username"><input type="hidden" name="score" id="score"></form>
+  <main>
+    <div></div>
+    <div>
+      <h1 id="logo"> The Labyrinth </h1>
+      <div id="maze"><div class="player" id="player"></div></div>
+    </div>
+    <div id="dataDiv">
+      <p> Time: <span id="timer">0:00</span> </p>
+      <p> Stage: <span id="stage">1</span> </p>
+    </div>
+  </main>
+</body>
+</html>
