@@ -141,6 +141,7 @@ function timer(){
     if (stop === true) {
       clearInterval(timer);
       stop = false;
+      return;
     }
     sec++;
     if(sec == 60) {
@@ -239,6 +240,10 @@ function formatTime(seconds) {
 
 function validateUsername() {
   let x = document.forms["startForm"]["username"].value;
+  if(!x) {
+    alert("Your nickname must not be empty");
+    return false;
+  }
   if (!/^[A-Za-z0-9]+$/.test(x)) {
     alert("Your nickname must contain only letters and numbers");
     return false;
@@ -305,6 +310,7 @@ async function writeScore() {
 }
 
 // ####################################################
+
 
 switch (file) {
   case "game":
