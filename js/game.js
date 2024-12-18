@@ -1,5 +1,5 @@
 var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
-let numofbc = 0;
+let numofbc = 1;
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
 var startTime, stop = false, maze, stage = 1, maxStage = 3, entrancePos = 3, subdiv = defSubdiv;
 const player = {
@@ -12,7 +12,8 @@ if(typeof usr !== "undefined") { player.username = usr; }
 
 
 async function newStage() {
-  numofbc = 0;
+  document.getElementById("DBomba").innerHTML = '1';
+  numofbc = 1;
   document.getElementById("maze").innerHTML = '<div class="player" id="player"></div>';
   player.sprite = document.getElementById("player");
   player.sprite.style.transition = "0ms";
@@ -214,9 +215,10 @@ function bindPlayerMovment() {
   }
 
   function dziecoBomby(dx, dy){
-    if(numofbc === 0)
+    if(numofbc === 1)
     maze[player.y + dy][player.x + dx] = 1;
-    numofbc = 1;
+    numofbc = 0;
+    document.getElementById("DBomba").innerHTML = '0';
 }
   Mousetrap.bind(["down", "s"], () => movePlayer(0, 1), 'keyup');
   Mousetrap.bind(["up", "w"], () => movePlayer(0, -1), 'keyup');
