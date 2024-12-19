@@ -14,19 +14,22 @@
     <img src="/assets/ui/sound.png" alt="sound" onclick="sound()">
     <img src="/assets/ui/settings.png" alt="settings" onclick="settings()">
   </div>
-  
+
   <form action="/start/" method="POST" id="fr"><input type="hidden" name="username" id="username"><input type="hidden" name="score" id="score"></form>
+  
   <main>
-    <div></div>
+    <div id="dataDiv">
+      <p> Time: <span id="timer">0:00</span> </p>
+      <p> Stage: <span id="stage">1</span> </p>
+      <p> Bombs: <span id="bombs">1</span> </p>
+    </div>
+
     <div>
       <h1 id="logo"> The Labyrinth </h1>
       <div id="maze"><div class="player" id="player"></div></div>
     </div>
-    <div id="dataDiv">
-      <p> Time: <span id="timer">0:00</span> </p>
-      <p> Stage: <span id="stage">1</span> </p>
-      <p> DziecoBombs: <span id="DBomba"></span> </p>
-    </div>
+
+    <div></div>
   </main>
 </body>
 </html>

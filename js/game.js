@@ -1,18 +1,19 @@
 var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
-var startTime, stop = false, maze, stage = 1, maxStage = 3, entrancePos = 3, subdiv = defSubdiv, numofbc = 1;
+var startTime, stop = false, maze, stage = 1, maxStage = 3, entrancePos = 3, subdiv = defSubdiv;
 const player = {
   x: 0,
   y: 0,
   sprite: document.getElementById("player"),
-  username: "defult"
+  username: "defult",
+  numofbc: 1
 };
 if(typeof usr !== "undefined") { player.username = usr; }
 
 
 async function newStage() {
-  document.getElementById("DBomba").innerHTML = '1';
-  numofbc = 1;
+  player.numofbc = 1;
+  document.getElementById("bombs").innerHTML = player.numofbc;
   document.getElementById("maze").innerHTML = '<div class="player" id="player"></div>';
   player.sprite = document.getElementById("player");
   player.sprite.style.transition = "0ms";
@@ -184,8 +185,9 @@ function bindPlayerMovment() {
   // });
 
   function checkSpecial() {
-    const pos = maze[player.y][player.x];
+    var pos = maze[player.y][player.x];
     if (pos === 4) {
+      maze[player.y][player.x] = 1;
       maze[maze.length - 1][maze[maze.length - 1].findIndex((e) => e === 3)] = 6;
       document.getElementById("key").style.opacity = "0";
       const door = document.getElementById("door");
@@ -214,10 +216,12 @@ function bindPlayerMovment() {
   }
 
   function dziecoBomby(dx, dy){
-    if(numofbc === 1)
-    maze[player.y + dy][player.x + dx] = 1;
-    numofbc = 0;
-    document.getElementById("DBomba").innerHTML = '0';
+    if(player.numofbc !== 0 && maze[player.y + dy][player.x + dx] === 0) {
+      maze[player.y + dy][player.x + dx] = 1;
+      player.numofbc = 0;
+      document.querySelector('#maze :nth-child(' + (((player.y + dy)*subdiv) + (player.x + dx) + (2)) + ')').style.backgroundImage = "none";
+      document.getElementById("bombs").innerHTML = player.numofbc;
+    }
 }
   Mousetrap.bind(["down", "s"], () => movePlayer(0, 1), 'keyup');
   Mousetrap.bind(["up", "w"], () => movePlayer(0, -1), 'keyup');
@@ -234,21 +238,6 @@ function bindPlayerMovment() {
     player.sprite.style.top = player.y * (size/subdiv) + "px";
     player.sprite.style.left = player.x * (size/subdiv) + "px";
   });
-}
-
-function startModal() {
-  let p;
-  do {
-    p = prompt("Please enter your username:", "");
-  } while (!p || p.includes(" "));
-  player.username = p;
-}
-
-function endModal() {
-  alert(`Congratuletions! You clered ${maxStage} stages in ${min} minutes and ${sec} seconds!`);
-  stage = 0;
-  stop = true;
-  entrancePos = 3;
 }
 
 function formatTime(seconds) {
