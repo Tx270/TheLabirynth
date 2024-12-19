@@ -9,6 +9,12 @@
   <link rel="shortcut icon" href="/assets/player.png" type="image/x-icon">
 </head>
 <body>
+  <div id="options">
+    <img src="/assets/ui/help.png" alt="help" onclick="help()">
+    <img src="/assets/ui/sound.png" alt="sound" onclick="sound()">
+    <img src="/assets/ui/settings.png" alt="settings" onclick="settings()">
+  </div>
+  
   <form action="/start/" method="POST" id="fr"><input type="hidden" name="username" id="username"><input type="hidden" name="score" id="score"></form>
   <main>
     <div></div>
