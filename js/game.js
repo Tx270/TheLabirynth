@@ -13,7 +13,7 @@ if(typeof usr !== "undefined") { player.username = usr; }
 
 async function newStage() {
   player.numofbc = 1;
-  document.getElementById("bombs").innerHTML = player.numofbc;
+  document.getElementById("bombs").innerHTML = player.numofbc + " | 1";
   document.getElementById("maze").innerHTML = '<div class="player" id="player"></div>';
   player.sprite = document.getElementById("player");
   player.sprite.style.transition = "0ms";
@@ -25,7 +25,7 @@ async function newStage() {
       document.documentElement.style.setProperty("--subdiv", subdiv);
     }
     stage++;
-    document.getElementById("stage").innerText = stage;
+    document.getElementById("stage").innerText = stage + " | " + maxStage;
     draw();
   } else {
     stop = true;
@@ -220,7 +220,7 @@ function bindPlayerMovment() {
       maze[player.y + dy][player.x + dx] = 1;
       player.numofbc = 0;
       document.querySelector('#maze :nth-child(' + (((player.y + dy)*subdiv) + (player.x + dx) + (2)) + ')').style.backgroundImage = "none";
-      document.getElementById("bombs").innerHTML = player.numofbc;
+      document.getElementById("bombs").innerHTML = player.numofbc + " | 1";
     }
 }
   Mousetrap.bind(["down", "s"], () => movePlayer(0, 1), 'keyup');
@@ -325,6 +325,8 @@ switch (file) {
     preloadTextures();
     bindPlayerMovment();
     draw(true);
+    document.getElementById("bombs").innerText = "1 | 1";
+    document.getElementById("stage").innerText = "1 | " + maxStage;
     break;
   case "replay":
     document.getElementById('username').value = player.username;
