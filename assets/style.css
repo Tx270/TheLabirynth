@@ -176,15 +176,19 @@ th, td {
 
 
 #dataDiv {
-  display: flex;
+  display:flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   font-size: 50px;
 }
 
-#dataDiv p {
+#dataDiv > p {
   width: 300px;
   font-size: 50px;
   padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content:space-evenly;
 }
