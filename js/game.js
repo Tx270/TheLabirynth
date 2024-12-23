@@ -6,7 +6,9 @@ const player = {
   y: 0,
   sprite: document.getElementById("player"),
   username: "defult",
-  numofbc: 1
+  numofbc: 1,
+  dy: 1,
+  dx: 0
 };
 if(typeof usr !== "undefined") { player.username = usr; }
 
@@ -16,7 +18,7 @@ async function newStage() {
   document.getElementById("bombs").innerHTML = player.numofbc + " | 1";
   document.getElementById("maze").innerHTML = '<div class="player" id="player"></div>';
   player.sprite = document.getElementById("player");
-  player.sprite.style.transition = "0ms";
+  player.sprite.style.transition = "left 0ms, top 0ms";
 
   if(stage != maxStage) {
     if(stage%2) {
@@ -104,7 +106,7 @@ function draw(first = false) {
   if(!first) {
     // animate player at start
     player.sprite.style.opacity = "0";
-    player.sprite.style.transition = "200ms"
+    player.sprite.style.transition = "left 200ms, top 200ms"
     setTimeout(() => {
       player.sprite.style.top = player.y * (size/subdiv) + "px";
       player.sprite.style.opacity = "1";
@@ -113,7 +115,7 @@ function draw(first = false) {
     player.sprite.style.top = player.y * (size/subdiv) + "px";
     player.sprite.style.opacity = "1";
   }
-  setTimeout(() => { player.sprite.style.transition = "100ms"; }, 250);
+  setTimeout(() => { player.sprite.style.transition = "left 100ms, top 100ms"; }, 250);
 
 }
 
@@ -174,10 +176,10 @@ function preloadTextures() {
 
 function bindPlayerMovment() {
   // Jednorazowe przypisanie timera
-  Mousetrap.bind(["down", "s", "up", "w", "right", "d", "left", "a", "2", "5", "3", "1"], () => {
+  Mousetrap.bind(["down", "s", "up", "w", "right", "d", "left", "a", "c", "space"], () => {
     startTime = Math.round(Date.now() / 1000);
     timer();
-    Mousetrap.unbind(["down", "s", "up", "w", "right", "d", "left", "a", "2", "5", "3", "1"]);
+    Mousetrap.unbind(["down", "s", "up", "w", "right", "d", "left", "a", "c"]);
   });
 
   // Mousetrap.bind('n o c l i p', function() {
@@ -197,7 +199,7 @@ function bindPlayerMovment() {
       }, 800);
     } else if (pos === 6 && key) {
       player.sprite.style.opacity = "0";
-      player.sprite.style.transition = "200ms";
+      player.sprite.style.transition = "left 200ms, top 200ms";
       setTimeout(newStage, 200);
     }
   }
@@ -205,6 +207,9 @@ function bindPlayerMovment() {
   function movePlayer(dx, dy) {
     const newX = player.x + dx;
     const newY = player.y + dy;
+    player.dx = dx;
+    player.dy = dy;
+    player.sprite.style.rotate = getRotationAngle(dy, dx) + "deg";
 
     if ( newX >= 0 && newX < subdiv && newY >= 0 && newY < subdiv && [1, 4, 5, 6].includes(maze[newY]?.[newX]) ) {
       player.x = newX;
@@ -215,11 +220,11 @@ function bindPlayerMovment() {
     }
   }
 
-  function dziecoBomby(dx, dy){
-    if(player.numofbc !== 0 && maze[player.y + dy][player.x + dx] === 0) {
-      maze[player.y + dy][player.x + dx] = 1;
+  function dziecoBomby(){
+    if(player.numofbc !== 0 && maze[player.y + player.dy][player.x + player.dx] === 0 && (player.y + player.dy !== subdiv-1 && player.y + player.dy !== 0) && (player.x + player.dx !== subdiv-1 && player.x + player.dx !== 0)) {
+      maze[player.y + player.dy][player.x + player.dx] = 1;
       player.numofbc = 0;
-      document.querySelector('#maze :nth-child(' + (((player.y + dy)*subdiv) + (player.x + dx) + (2)) + ')').style.backgroundImage = "none";
+      document.querySelector('#maze :nth-child(' + (((player.y + player.dy)*subdiv) + (player.x + player.dx) + (2)) + ')').style.backgroundImage = "none";
       document.getElementById("bombs").innerHTML = player.numofbc + " | 1";
     }
 }
@@ -228,10 +233,7 @@ function bindPlayerMovment() {
   Mousetrap.bind(["right", "d"], () => movePlayer(1, 0), 'keyup');
   Mousetrap.bind(["left", "a"], () => movePlayer(-1, 0), 'keyup');
 
-  Mousetrap.bind(["2"], () => dziecoBomby(0, 1), 'keydown');
-  Mousetrap.bind(["5"], () => dziecoBomby(0, -1), 'keydown');
-  Mousetrap.bind(["3"], () => dziecoBomby(1, 0), 'keydown');
-  Mousetrap.bind(["1"], () => dziecoBomby(-1, 0), 'keydown');
+  Mousetrap.bind(["space", "c"], () => dziecoBomby(), 'keydown');
 
   window.addEventListener("resize", () => {
     size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
@@ -244,6 +246,13 @@ function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${minutes}:${secs.toString().padStart(2, '0')}`;
+}
+
+function getRotationAngle(dx, dy) {
+  let angleRadians = Math.atan2(-dy, dx);
+  let angleDegrees = angleRadians * (180 / Math.PI);
+
+  return angleDegrees;
 }
 
 function validateUsername() {
