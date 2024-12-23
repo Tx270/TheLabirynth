@@ -1,6 +1,6 @@
 var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
-var startTime, stop = false, maze, stage = 1, maxStage = 3, entrancePos = 3, subdiv = defSubdiv;
+var startTime, stop = false, maze, stage = 1, maxStage = 10, entrancePos = 3, subdiv = defSubdiv;
 const player = {
   x: 0,
   y: 0,
@@ -11,7 +11,12 @@ const player = {
   dx: 0
 };
 if(typeof usr !== "undefined") { player.username = usr; }
-
+const sfx = {
+  explosion: new Audio('/assets/sfx/explosion.wav'),
+  coin: new Audio('/assets/sfx/coin.wav'),
+  win: new Audio('/assets/sfx/win.wav'),
+  music: new Audio()
+};
 
 async function newStage() {
   player.numofbc = 1;
@@ -192,12 +197,14 @@ function bindPlayerMovment() {
       maze[player.y][player.x] = 1;
       maze[maze.length - 1][maze[maze.length - 1].findIndex((e) => e === 3)] = 6;
       document.getElementById("key").style.opacity = "0";
+      sfx.coin.play();
       const door = document.getElementById("door");
       door.style.backgroundImage = "url('assets/tiles/door_opening.gif')";
       setTimeout(() => { 
         door.style.backgroundImage = "url('assets/tiles/door_open.png')"; 
       }, 800);
     } else if (pos === 6 && key) {
+      sfx.win.play();
       player.sprite.style.opacity = "0";
       player.sprite.style.transition = "left 200ms, top 200ms";
       setTimeout(newStage, 200);
@@ -224,6 +231,7 @@ function bindPlayerMovment() {
     if(player.numofbc !== 0 && maze[player.y + player.dy][player.x + player.dx] === 0 && (player.y + player.dy !== subdiv-1 && player.y + player.dy !== 0) && (player.x + player.dx !== subdiv-1 && player.x + player.dx !== 0)) {
       maze[player.y + player.dy][player.x + player.dx] = 1;
       player.numofbc = 0;
+      sfx.explosion.play();
       document.querySelector('#maze :nth-child(' + (((player.y + player.dy)*subdiv) + (player.x + player.dx) + (2)) + ')').style.backgroundImage = "none";
       document.getElementById("bombs").innerHTML = player.numofbc + " | 1";
     }
@@ -270,6 +278,20 @@ function validateUsername() {
     return false;
   }
   Cookies.set('username', x);
+}
+
+function music() {
+  sfx.music.src = "/assets/sfx/music/music-" + (Math.floor(Math.random() * 3) + 1) + ".mp3";
+
+  sfx.music.play();
+
+  sfx.music.onended = music;
+}
+
+function setVolume(volume) {
+  Object.keys(sfx).forEach(key => {
+      sfx[key].volume = volume;
+  });
 }
 
 // ####################################################
@@ -331,9 +353,7 @@ async function writeScore() {
 
 fetch('/assets/options.html')
   .then(response => response.text())
-  .then(html => {
-    document.body.insertAdjacentHTML('afterbegin', html);
-  })
+  .then(html => { document.body.insertAdjacentHTML('afterbegin', html); })
   .catch(error => console.error('Error loading options menu:', error));
 
 
@@ -344,6 +364,8 @@ switch (file) {
     draw(true);
     document.getElementById("bombs").innerText = "1 | 1";
     document.getElementById("stage").innerText = "1 | " + maxStage;
+    setVolume(0.5)
+    music();
     break;
   case "replay":
     document.getElementById('username').value = player.username;

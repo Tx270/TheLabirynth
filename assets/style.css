@@ -153,7 +153,7 @@ th, td {
 }
 
 #dataDiv > p {
-  width: 340px;
+  width: 400px;
   padding-top: 20px;
 }
 
@@ -215,4 +215,9 @@ th, td {
   right: 60px;
   font-size: 40px;
   font-weight: 900;
+  cursor: pointer;
+}
+
+.close:hover {
+  filter: brightness(0.8);
 }
