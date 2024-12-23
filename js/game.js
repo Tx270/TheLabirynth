@@ -329,6 +329,14 @@ async function writeScore() {
 // ####################################################
 
 
+fetch('/assets/options.html')
+  .then(response => response.text())
+  .then(html => {
+    document.body.insertAdjacentHTML('afterbegin', html);
+  })
+  .catch(error => console.error('Error loading options menu:', error));
+
+
 switch (file) {
   case "game":
     preloadTextures();

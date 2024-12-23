@@ -33,41 +33,6 @@ main {
 
 /* ########################################################################################################################## */
 
-#options {
-  position: absolute;
-  width: 100%;
-  height: 10%;
-
-  display: flex;
-  align-items: center;
-  justify-content: end;
-}
-
-#options img {
-  width: 60px;
-  height: 60px;
-
-  margin: auto 10px;
-
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
-
-  cursor: pointer;
-  transition: 100ms;
-}
-
-#options img:last-child {
-  width: 50px;
-  height: 50px;
-}
-
-/* ########################################################################################################################## */
-
-#options img:hover {
-  filter: brightness(0.8);
-}
-
 #startForm {
   height: 100%;
   width: 100%;
@@ -180,7 +145,7 @@ th, td {
 
 
 #dataDiv {
-  display:flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
@@ -190,4 +155,64 @@ th, td {
 #dataDiv > p {
   width: 340px;
   padding-top: 20px;
+}
+
+/* ########################################################################################################################## */
+
+#options {
+  position: absolute;
+  width: 100%;
+  height: 10%;
+
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  z-index: 2;
+}
+
+#options img {
+  width: 60px;
+  height: 60px;
+
+  margin: auto 10px;
+
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+
+  cursor: pointer;
+  transition: 100ms;
+}
+
+#options img:last-child {
+  width: 50px;
+  height: 50px;
+}
+
+#options img:hover {
+  filter: brightness(0.8);
+}
+
+#help, #settings {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  background-color: var(--bc-color);
+  z-index: 10;
+}
+
+.close {
+  position: absolute;
+  top: 40px;
+  right: 60px;
+  font-size: 40px;
+  font-weight: 900;
 }
