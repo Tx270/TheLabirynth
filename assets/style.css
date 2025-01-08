@@ -84,6 +84,18 @@ th, td {
   border-bottom: 1px solid #ddd;
 }
 
+#leaderboardBody>tr:nth-child(1)>td {
+  color: #a97900;
+}
+
+#leaderboardBody>tr:nth-child(2)>td {
+  color: #cacaca;
+}
+
+#leaderboardBody>tr:nth-child(3)>td {
+  color: brown;
+}
+
 #leaderboardBody>tr:last-child>td {
   border-bottom: 0;
 }
