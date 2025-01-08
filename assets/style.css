@@ -14,7 +14,6 @@
 
 * {
   font-family: pixelon;
-  color: var(--color);
   padding: 0;
   margin: 0;
 }
@@ -22,6 +21,7 @@
 body {
   background-color: var(--bc-color);
   height: 100vh;
+  color: var(--color);
 }
 
 main {
@@ -86,14 +86,6 @@ th, td {
 
 #leaderboardBody>tr:nth-child(1)>td {
   color: #a97900;
-}
-
-#leaderboardBody>tr:nth-child(2)>td {
-  color: #cacaca;
-}
-
-#leaderboardBody>tr:nth-child(3)>td {
-  color: brown;
 }
 
 #leaderboardBody>tr:last-child>td {
