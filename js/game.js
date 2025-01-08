@@ -1,6 +1,6 @@
 var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
-var startTime, stop = false, maze, stage = 1, maxStage = 10, entrancePos = 3, subdiv = defSubdiv;
+var startTime, stop = false, maze, stage = 1, entrancePos = 3, subdiv = defSubdiv;
 const player = {
   x: 0,
   y: 0,
