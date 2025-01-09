@@ -1,6 +1,8 @@
 var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
+var volume = document.getElementById("volume");
 var startTime, stop = false, maze, stage = 1, entrancePos = 3, subdiv = defSubdiv;
+
 const player = {
   x: 0,
   y: 0,
@@ -17,6 +19,8 @@ const sfx = {
   win: new Audio('/assets/sfx/win.wav'),
   music: new Audio()
 };
+
+
 
 async function newStage() {
   player.numofbc = 1;
@@ -204,7 +208,7 @@ function bindPlayerMovment() {
         door.style.backgroundImage = "url('assets/tiles/door_open.png')"; 
       }, 800);
     } else if (pos === 6 && key) {
-      sfx.win.play();
+      if(stage != maxStage) sfx.win.play();
       player.sprite.style.opacity = "0";
       player.sprite.style.transition = "left 200ms, top 200ms";
       setTimeout(newStage, 200);
@@ -290,7 +294,7 @@ function music() {
 
 function setVolume(volume) {
   Object.keys(sfx).forEach(key => {
-      sfx[key].volume = volume;
+    sfx[key].volume = volume;
   });
 }
 
@@ -350,6 +354,20 @@ async function writeScore() {
 
 // ####################################################
 
+function sound() {
+  if(volume.value === "0") {
+    volume.value = "0.5";
+    setVolume(volume.value);
+    document.getElementById("sound").src = "/assets/ui/sound.png";
+  } else {
+    volume.value = "0";
+    setVolume(volume.value);
+    document.getElementById("sound").src = "/assets/ui/mute.png";
+  }
+}
+
+// ####################################################
+
 
 fetch('/assets/options.html')
   .then(response => response.text())
@@ -364,7 +382,8 @@ switch (file) {
     draw(true);
     document.getElementById("bombs").innerText = "1 | 1";
     document.getElementById("stage").innerText = "1 | " + maxStage;
-    setVolume(0.5)
+    volume.value = "0.5";
+    setVolume("0.5");
     music();
     break;
   case "replay":

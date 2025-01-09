@@ -1,12 +1,11 @@
 <?php
 
-if($_POST['username'] && $_POST['score']) {
+if($_POST['username'] && $_POST['score'] && $_POST['volume']) {
+  echo "<!DOCTYPE html><html lang='en'><head> <script> const usr = '".$_POST['username']."'; const score = '".$_POST['score']."'; const vol = '".$_POST['volume']."'; </script>";
   echo file_get_contents('replay.html');
-  echo "<script> const usr = '".$_POST['username']."'; const score = '".$_POST['score']."' </script>";
 } else {
   $config = require $_SERVER['DOCUMENT_ROOT'] . '/php/config.php';
-  echo "<!DOCTYPE html><html lang='en'><head>";
-  echo "<script> const maxStage = ".$config['MAX_STAGE']."; </script>";
+  echo "<!DOCTYPE html><html lang='en'><head> <script> const maxStage = ".$config['MAX_STAGE']."; </script>";
   echo file_get_contents('play.html');
 }
 
