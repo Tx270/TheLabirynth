@@ -1,6 +1,5 @@
 var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
-var volume = document.getElementById("volume");
 var startTime, stop = false, maze, stage = 1, entrancePos = 3, subdiv = defSubdiv;
 
 const player = {
@@ -12,14 +11,16 @@ const player = {
   dy: 1,
   dx: 0
 };
-if(typeof usr !== "undefined") { player.username = usr; }
+if(typeof usr !== "undefined") player.username = usr;
 const sfx = {
   explosion: new Audio('/assets/sfx/explosion.wav'),
   coin: new Audio('/assets/sfx/coin.wav'),
   win: new Audio('/assets/sfx/win.wav'),
-  music: new Audio()
+  end: new Audio("/assets/sfx/end.mp3"),
+  music: new Audio(),
+  volume: 0.5
 };
-
+if(Cookies.get("volume")) sfx.volume = Cookies.get("volume"); else Cookies.set("volume", "0.5");
 
 
 async function newStage() {
@@ -284,20 +285,6 @@ function validateUsername() {
   Cookies.set('username', x);
 }
 
-function music() {
-  sfx.music.src = "/assets/sfx/music/music-" + (Math.floor(Math.random() * 3) + 1) + ".mp3";
-
-  sfx.music.play();
-
-  sfx.music.onended = music;
-}
-
-function setVolume(volume) {
-  Object.keys(sfx).forEach(key => {
-    sfx[key].volume = volume;
-  });
-}
-
 // ####################################################
 
 async function fetchData(params) {
@@ -354,45 +341,65 @@ async function writeScore() {
 
 // ####################################################
 
-function sound() {
-  if(volume.value === "0") {
-    volume.value = "0.5";
-    setVolume(volume.value);
+function music() {
+  sfx.music.src = "/assets/sfx/music/music-" + (Math.floor(Math.random() * 3) + 1) + ".mp3";
+
+  sfx.music.play();
+
+  sfx.music.onended = music;
+}
+
+function setVolume(volume) {
+  Object.keys(sfx).forEach(key => {
+    sfx[key].volume = volume;
+  });
+  Cookies.set("volume", volume);
+}
+
+function toggleSound() {
+  if(sfx.volume === "0") {
+    sfx.volume = "0.5";
     document.getElementById("sound").src = "/assets/ui/sound.png";
   } else {
-    volume.value = "0";
-    setVolume(volume.value);
+    sfx.volume = "0";
     document.getElementById("sound").src = "/assets/ui/mute.png";
   }
+  setVolume(sfx.volume);
 }
 
 // ####################################################
 
+document.addEventListener("DOMContentLoaded", () => {
+  fetch('/assets/options.html')
+    .then(response => response.text())
+    .then(html => {
+      document.body.insertAdjacentHTML('afterbegin', html);
+      setVolume(sfx.volume);
+      if(sfx.volume === "0") document.getElementById("sound").src = "/assets/ui/mute.png";
+      main();
+    })
+    .catch(error => console.error('Error loading data:', error));
+});
 
-fetch('/assets/options.html')
-  .then(response => response.text())
-  .then(html => { document.body.insertAdjacentHTML('afterbegin', html); })
-  .catch(error => console.error('Error loading options menu:', error));
-
-
-switch (file) {
-  case "game":
-    preloadTextures();
-    bindPlayerMovment();
-    draw(true);
-    document.getElementById("bombs").innerText = "1 | 1";
-    document.getElementById("stage").innerText = "1 | " + maxStage;
-    volume.value = "0.5";
-    setVolume("0.5");
-    music();
-    break;
-  case "replay":
-    document.getElementById('username').value = player.username;
-    document.getElementById('time').innerText = formatTime(score);
-    writeScore();
-    break;
-  case "play":
-    document.getElementById("maxStage").innerText = maxStage;
-    document.getElementById("username").value = Cookies.get('username') ?? "";
-    break;
+function main() {
+  switch (file) {
+    case "game":
+      preloadTextures();
+      bindPlayerMovment();
+      draw(true);
+      document.getElementById("bombs").innerText = "1 | 1";
+      document.getElementById("stage").innerText = "1 | " + maxStage;
+      music();
+      break;
+    case "replay":
+      document.getElementById('username').value = player.username;
+      document.getElementById('time').innerText = formatTime(score);
+      writeScore();
+      sfx.end.play();
+      break;
+    case "play":
+      document.getElementById("maxStage").innerText = maxStage;
+      document.getElementById("username").value = Cookies.get('username') ?? "";
+      break;
+  }
 }

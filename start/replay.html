@@ -3,6 +3,7 @@
   <title>The Labyrinth</title>
   <link rel="stylesheet" href="/assets/style.css">
   <script> const file = "replay"; </script>
+  <script src="/js/libs/js-cookie.js"></script>
   <script src="/js/game.js" defer></script>
   <link rel="shortcut icon" href="/assets/favicon.png" type="image/x-icon">
 </head>
@@ -27,12 +28,5 @@
       </tbody>  
     </table>
   </form>
-
-  <script>
-    if (vol != "0") {
-      const audio = new Audio("/assets/sfx/end.mp3");
-      audio.play();
-    }
-  </script>
 </body>
 </html>

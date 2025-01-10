@@ -1,7 +1,7 @@
 <?php
 
-if($_POST['username'] && $_POST['score'] && $_POST['volume']) {
-  echo "<!DOCTYPE html><html lang='en'><head> <script> const usr = '".$_POST['username']."'; const score = '".$_POST['score']."'; const vol = '".$_POST['volume']."'; </script>";
+if($_POST['username'] && $_POST['score']) {
+  echo "<!DOCTYPE html><html lang='en'><head> <script> const usr = '".$_POST['username']."'; const score = '".$_POST['score']."'; </script>";
   echo file_get_contents('replay.html');
 } else {
   $config = require $_SERVER['DOCUMENT_ROOT'] . '/php/config.php';
