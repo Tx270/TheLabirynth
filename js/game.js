@@ -189,6 +189,7 @@ function bindPlayerMovment() {
   Mousetrap.bind(["down", "s", "up", "w", "right", "d", "left", "a", "c", "space"], () => {
     startTime = Math.round(Date.now() / 1000);
     timer();
+    if (sfx.music.paused || sfx.music.currentTime == 0 || sfx.music.ended) music();  
     Mousetrap.unbind(["down", "s", "up", "w", "right", "d", "left", "a", "c"]);
   });
 
@@ -344,7 +345,7 @@ async function writeScore() {
 function music() {
   sfx.music.src = "/assets/sfx/music/music-" + (Math.floor(Math.random() * 3) + 1) + ".mp3";
 
-  sfx.music.play();
+  sfx.music.play().catch(err => { console.log('Music play error:', err); });
 
   sfx.music.onended = music;
 }
@@ -395,7 +396,7 @@ function main() {
       document.getElementById('username').value = player.username;
       document.getElementById('time').innerText = formatTime(score);
       writeScore();
-      sfx.end.play();
+      sfx.end.play().catch(err => { console.log('Music play error:', err); });
       break;
     case "play":
       document.getElementById("maxStage").innerText = maxStage;
