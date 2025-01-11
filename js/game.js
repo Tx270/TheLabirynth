@@ -1,16 +1,7 @@
 var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
-var startTime, stop = false, maze, stage = 1, entrancePos = 3, subdiv = defSubdiv;
-
-const player = {
-  x: 0,
-  y: 0,
-  sprite: document.getElementById("player"),
-  username: "defult",
-  numofbc: 1,
-  dy: 1,
-  dx: 0
-};
+var startTime, stop = false, maze, stage = 1, entrancePos = 3, subdiv = defSubdiv, lastMsg, multiplayer = true; // TODO: Multiplayer shoud be passed from start
+const player = new Character("defult", document.getElementById("player"));
 if(typeof usr !== "undefined") player.username = usr;
 const sfx = {
   explosion: new Audio('/assets/sfx/explosion.wav'),
@@ -22,6 +13,8 @@ const sfx = {
 };
 if(Cookies.get("volume")) sfx.volume = Cookies.get("volume"); else Cookies.set("volume", "0.5");
 
+
+// ####################################################
 
 async function newStage() {
   player.numofbc = 1;
@@ -192,46 +185,6 @@ function bindPlayerMovment() {
     Mousetrap.unbind(["down", "s", "up", "w", "right", "d", "left", "a", "c"]);
   });
 
-  // Mousetrap.bind('n o c l i p', function() {
-  //   alert('no clip mode activated');
-  // });
-
-  function checkSpecial() {
-    var pos = maze[player.y][player.x];
-    if (pos === 4) {
-      maze[player.y][player.x] = 1;
-      maze[maze.length - 1][maze[maze.length - 1].findIndex((e) => e === 3)] = 6;
-      document.getElementById("key").style.opacity = "0";
-      sfx.coin.play();
-      const door = document.getElementById("door");
-      door.style.backgroundImage = "url('assets/tiles/door_opening.gif')";
-      setTimeout(() => { 
-        door.style.backgroundImage = "url('assets/tiles/door_open.png')"; 
-      }, 800);
-    } else if (pos === 6 && key) {
-      if(stage != maxStage) sfx.win.play();
-      player.sprite.style.opacity = "0";
-      player.sprite.style.transition = "left 200ms, top 200ms";
-      setTimeout(newStage, 200);
-    }
-  }
-
-  function movePlayer(dx, dy) {
-    const newX = player.x + dx;
-    const newY = player.y + dy;
-    player.dx = dx;
-    player.dy = dy;
-    player.sprite.style.rotate = getRotationAngle(dy, dx) + "deg";
-
-    if ( newX >= 0 && newX < subdiv && newY >= 0 && newY < subdiv && [1, 4, 5, 6].includes(maze[newY]?.[newX]) ) {
-      player.x = newX;
-      player.y = newY;
-      player.sprite.style.top = player.y * (size / subdiv) + "px";
-      player.sprite.style.left = player.x * (size / subdiv) + "px";
-      checkSpecial();
-    }
-  }
-
   function dziecoBomby(){
     if(player.numofbc !== 0 && maze[player.y + player.dy][player.x + player.dx] === 0 && (player.y + player.dy !== subdiv-1 && player.y + player.dy !== 0) && (player.x + player.dx !== subdiv-1 && player.x + player.dx !== 0)) {
       maze[player.y + player.dy][player.x + player.dx] = 1;
@@ -240,11 +193,13 @@ function bindPlayerMovment() {
       document.querySelector('#maze :nth-child(' + (((player.y + player.dy)*subdiv) + (player.x + player.dx) + (2)) + ')').style.backgroundImage = "none";
       document.getElementById("bombs").innerHTML = player.numofbc + " | 1";
     }
-}
-  Mousetrap.bind(["down", "s"], () => movePlayer(0, 1), 'keyup');
-  Mousetrap.bind(["up", "w"], () => movePlayer(0, -1), 'keyup');
-  Mousetrap.bind(["right", "d"], () => movePlayer(1, 0), 'keyup');
-  Mousetrap.bind(["left", "a"], () => movePlayer(-1, 0), 'keyup');
+  }
+
+
+  Mousetrap.bind(["down", "s"], () => player.move(0, 1), 'keyup');
+  Mousetrap.bind(["up", "w"], () => player.move(0, -1), 'keyup');
+  Mousetrap.bind(["right", "d"], () => player.move(1, 0), 'keyup');
+  Mousetrap.bind(["left", "a"], () => player.move(-1, 0), 'keyup');
 
   Mousetrap.bind(["space", "c"], () => dziecoBomby(), 'keydown');
 
@@ -339,6 +294,24 @@ async function writeScore() {
   }
 }
 
+function sendMessage(message) {
+  fetch('/php/send.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ message: message, username: player.username })
+  })
+  .then(response => response.json())
+  .then(data => { lastMsg = data; })
+  .catch(error => { console.error('Error:', error); });
+};
+
+function reciveMessage(data) {
+  if(data.username === player.username) return;
+  movePlayer(parseInt(data.message.split(",")[0]), parseInt(data.message.split(",")[1]), false);
+};
+
 // ####################################################
 
 function music() {
@@ -389,6 +362,9 @@ function main() {
       draw(true);
       document.getElementById("bombs").innerText = "1 | 1";
       document.getElementById("stage").innerText = "1 | " + maxStage;
+      var pusher = new Pusher('53aff91618915dd8f529', { cluster: 'eu' });
+      var channel = pusher.subscribe('maze');
+      channel.bind('message', reciveMessage);
       music();
       break;
     case "replay":

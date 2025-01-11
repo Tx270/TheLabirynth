@@ -2,3 +2,5 @@ assets/tiles/all
 changes
 php/config.php
 db/export.sql
+composer.lock
+composer.json
