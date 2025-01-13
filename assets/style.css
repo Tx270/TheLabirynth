@@ -210,6 +210,8 @@ th, td {
 
   background-color: var(--bc-color);
   z-index: 10;
+
+  text-align: center;
 }
 
 .close {
@@ -223,4 +225,24 @@ th, td {
 
 .close:hover {
   filter: brightness(0.8);
+}
+
+#help h1, #settings h1 {
+  font-size: 60px;
+  margin-bottom: 40px;
+}
+
+#help h2, #settings h3 {
+  font-size: 30px;
+  margin-bottom: 25px;
+}
+
+#help h3, #settings h3 {
+  font-size: 25px;
+  margin-bottom: 20px;
+}
+
+#help h4, #settings p {
+  font-size: 15px;
+  margin-bottom: 20px;
 }
