@@ -10,10 +10,11 @@
     <link rel="shortcut icon" href="/assets/favicon.png" type="image/x-icon">
   </head>
   <body>
-    <form action="/" method="POST" id="startForm" name="startForm" onsubmit="return false;">
+    <form action="/" method="POST" id="startForm" name="startForm">
       <h2 style="margin-bottom: 20px;">Enter the room code:</h2>
       <input type="text" name="channelName" id="channel" placeholder="Code..." spellcheck="false" autocomplete="off">
-      <button onclick="joiningRoom()">Enter</button>
+      <input type="hidden" name="username" id="username" value="">
+      <button onclick="joiningRoom(event)">Enter</button>
     </form>
   </body>
 </html>

@@ -10,7 +10,7 @@ class Character {
     }
   
     move(dx, dy, send = true) {
-      if (send && multiplayer) sendMessage(dx + "," + dy, "move", "move");
+      if (send && multiplayer) sendMessage(dx + "," + dy, channelName, "move");
       const newX = this.x + dx;
       const newY = this.y + dy;
       this.dx = dx;

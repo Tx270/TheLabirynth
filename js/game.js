@@ -1,7 +1,7 @@
 var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
 var pusher = new Pusher('53aff91618915dd8f529', { cluster: 'eu' });
-var startTime, stop = false, maze, stage = 1, entrancePos = 3, subdiv = defSubdiv, lastMsg, multiplayer = true; // TODO: Multiplayer shoud be passed from start
+var startTime, stop = false, maze, stage = 1, entrancePos = 3, subdiv = defSubdiv, lastMsg, multiplayer = multiplayer || false;
 const player = new Character("defult", document.getElementById("player"));
 if(typeof usr !== "undefined") player.username = usr;
 const sfx = {
@@ -259,18 +259,19 @@ function submitForm(action) {
   form.submit();
 }
 
-function joiningRoom() {
+function joiningRoom(event) {
+  event.preventDefault();
+
   sendMessage(player.username, document.getElementById('channel').value, 'joined');
   var channel = pusher.subscribe(document.getElementById('channel').value);
 
   var stop = false;
   channel.bind("ok", function(data) { 
     if(data.username === player.username || data.message !== player.username) return;
-    alert("Dołączono do pokoju użytkownika " + data.username); 
-    clearTimeout(timeout); 
+    document.getElementById('startForm').submit();
   });
 
-  var timeout = setTimeout(() => {
+  setTimeout(() => {
     if (!stop) {
       channel.unbind("ok");
       alert("Nie udało się dołączyć do pokoju");
@@ -394,10 +395,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function main() {
   switch (file) {
-    case "multiplayer":
-      var channel = pusher.subscribe(channelName);
-      channel.bind('move', messageMove);
     case "game":
+      if(multiplayer) {
+        var channel = pusher.subscribe(channelName);
+        channel.bind('move', messageMove);
+        alert("You are in the room: " + channelName);
+      }
       preloadTextures();
       bindPlayerMovment();
       draw(true);
@@ -409,7 +412,13 @@ function main() {
       window.channelName = generateUUID();
       document.getElementById('channelName').value = window.channelName;
       var channel = pusher.subscribe(window.channelName);
-      channel.bind('joined', function(data) { sendMessage(data.username, window.channelName, "ok"); });
+      channel.bind('joined', function(data) {
+        if(data.username === player.username) return;
+        sendMessage(data.username, window.channelName, "ok"); 
+        document.getElementById('startForm').submit();
+      });
+    case "join":
+      document.getElementById('username').value = player.username;
       break;
     case "replay":
       document.getElementById('username').value = player.username;

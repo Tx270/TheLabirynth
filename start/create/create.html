@@ -12,7 +12,7 @@
 <body>
   <form action="/" method="POST" id="startForm" name="startForm">
     <input type="text" name="channelName" id="channelName" value="" readonly="readonly" tabindex="-1" onfocus="this.blur();" onclick="this.select(); navigator.clipboard.writeText(this.value); alert('Copied to clipboard!');" />
-    <!-- <button type="submit" id="singleplayer">Start Game</button> -->
+    <input type="hidden" name="username" id="username" value="">
   </form>
 </body>
 </html>
