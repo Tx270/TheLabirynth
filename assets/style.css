@@ -169,7 +169,7 @@ th, td {
 
   display: flex;
   align-items: center;
-  justify-content: end;
+  justify-content: space-between;
   z-index: 2;
 }
 
