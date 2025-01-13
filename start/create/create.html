@@ -1,0 +1,18 @@
+ <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Labyrinth</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <script> const file = "create"; </script>
+  <script src="/js/libs/pusher.min.js"></script>
+  <script src="/js/libs/character.js"></script>
+  <script src="/js/libs/js-cookie.js"></script>
+  <script src="/js/game.js" defer></script>
+  <link rel="shortcut icon" href="/assets/favicon.png" type="image/x-icon">
+</head>
+<body>
+  <form action="/" method="POST" id="startForm" name="startForm">
+    <input type="text" name="channelName" id="channelName" value="" readonly="readonly" tabindex="-1" onfocus="this.blur();" onclick="this.select(); navigator.clipboard.writeText(this.value); alert('Copied to clipboard!');" />
+    <!-- <button type="submit" id="singleplayer">Start Game</button> -->
+  </form>
+</body>
+</html>

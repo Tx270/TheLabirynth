@@ -1,5 +1,6 @@
 var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
+var pusher = new Pusher('53aff91618915dd8f529', { cluster: 'eu' });
 var startTime, stop = false, maze, stage = 1, entrancePos = 3, subdiv = defSubdiv, lastMsg, multiplayer = true; // TODO: Multiplayer shoud be passed from start
 const player = new Character("defult", document.getElementById("player"));
 if(typeof usr !== "undefined") player.username = usr;
@@ -217,6 +218,16 @@ function formatTime(seconds) {
   return `${minutes}:${secs.toString().padStart(2, '0')}`;
 }
 
+function generateUUID() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678901234567890123456789';
+  let uuid = '';
+  for (let i = 0; i < 6; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    uuid += characters[randomIndex];
+  }
+  return uuid;
+}
+
 function getRotationAngle(dx, dy) {
   let angleRadians = Math.atan2(-dy, dx);
   let angleDegrees = angleRadians * (180 / Math.PI);
@@ -239,6 +250,32 @@ function validateUsername() {
     return false;
   }
   Cookies.set('username', x);
+}
+
+function submitForm(action) {
+  var form = document.getElementById('startForm');
+
+  form.action = action;
+  form.submit();
+}
+
+function joiningRoom() {
+  sendMessage(player.username, document.getElementById('channel').value, 'joined');
+  var channel = pusher.subscribe(document.getElementById('channel').value);
+
+  var stop = false;
+  channel.bind("ok", function(data) { 
+    if(data.username === player.username || data.message !== player.username) return;
+    alert("Dołączono do pokoju użytkownika " + data.username); 
+    clearTimeout(timeout); 
+  });
+
+  var timeout = setTimeout(() => {
+    if (!stop) {
+      channel.unbind("ok");
+      alert("Nie udało się dołączyć do pokoju");
+    }
+  }, 5000);
 }
 
 // ####################################################
@@ -295,22 +332,22 @@ async function writeScore() {
   }
 }
 
-function sendMessage(message) {
+function sendMessage(message, chName, event) {
   fetch('/php/send.php', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ message: message, username: player.username })
+    body: JSON.stringify({ message: message, username: player.username, channel: chName, event: event })
   })
   .then(response => response.json())
   .then(data => { lastMsg = data; })
   .catch(error => { console.error('Error:', error); });
 };
 
-function reciveMessage(data) {
+function messageMove(data) {
   if(data.username === player.username) return;
-  movePlayer(parseInt(data.message.split(",")[0]), parseInt(data.message.split(",")[1]), false);
+  player.move(parseInt(data.message.split(",")[0]), parseInt(data.message.split(",")[1]), false);
 };
 
 // ####################################################
@@ -357,16 +394,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function main() {
   switch (file) {
+    case "multiplayer":
+      var channel = pusher.subscribe(channelName);
+      channel.bind('move', messageMove);
     case "game":
       preloadTextures();
       bindPlayerMovment();
       draw(true);
       document.getElementById("bombs").innerText = "1 | 1";
       document.getElementById("stage").innerText = "1 | " + maxStage;
-      var pusher = new Pusher('53aff91618915dd8f529', { cluster: 'eu' });
-      var channel = pusher.subscribe('maze');
-      channel.bind('message', reciveMessage);
       music();
+      break;
+    case "create":
+      window.channelName = generateUUID();
+      document.getElementById('channelName').value = window.channelName;
+      var channel = pusher.subscribe(window.channelName);
+      channel.bind('joined', function(data) { sendMessage(data.username, window.channelName, "ok"); });
       break;
     case "replay":
       document.getElementById('username').value = player.username;

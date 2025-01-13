@@ -1,0 +1,19 @@
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Labyrinth</title>
+    <link rel="stylesheet" href="/assets/style.css">
+    <script> const file = "join"; </script>
+    <script src="/js/libs/pusher.min.js"></script>
+    <script src="/js/libs/character.js"></script>
+    <script src="/js/libs/js-cookie.js"></script>
+    <script src="/js/game.js" defer></script>
+    <link rel="shortcut icon" href="/assets/favicon.png" type="image/x-icon">
+  </head>
+  <body>
+    <form action="/" method="POST" id="startForm" name="startForm" onsubmit="return false;">
+      <h2 style="margin-bottom: 20px;">Enter the room code:</h2>
+      <input type="text" name="channelName" id="channel" placeholder="Code..." spellcheck="false" autocomplete="off">
+      <button onclick="joiningRoom()">Enter</button>
+    </form>
+  </body>
+</html>

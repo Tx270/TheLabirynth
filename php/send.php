@@ -4,8 +4,8 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $data = json_decode(file_get_contents('php://input'), true);
-if (!isset($data['message']) || !isset($data['username'])) {
-    echo json_encode(['status' => 'error', 'message' => 'No message or username']);
+if (!isset($data['message']) || !isset($data['username']) || !isset($data['channel']) || !isset($data['event'])) {
+    echo json_encode(['status' => 'error', 'message' => 'No message, username, channel or event']);
     die();
 }
 
@@ -22,6 +22,6 @@ $pusher = new Pusher\Pusher(
     $options
 );
 
-$pusher->trigger('maze', 'message', ['message' => $data['message'], 'username' => $data['username']]);
+$pusher->trigger($data['channel'], $data['event'], ['message' => $data['message'], 'username' => $data['username']]);
 
 echo json_encode(['status' => 'ok', 'message' => $data['message']]);

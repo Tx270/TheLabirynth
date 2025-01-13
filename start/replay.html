@@ -3,6 +3,7 @@
   <title>The Labyrinth</title>
   <link rel="stylesheet" href="/assets/style.css">
   <script> const file = "replay"; </script>
+  <script src="/js/libs/pusher.min.js"></script>
   <script src="/js/libs/character.js"></script>
   <script src="/js/libs/js-cookie.js"></script>
   <script src="/js/game.js" defer></script>
@@ -13,7 +14,7 @@
 
     <h1>Your time is <span id="time"></span></h1>
     <input type="hidden" name="username" id="username">
-    <button type="submit">Try Again</button>
+    <button type="submit" id="replay">Try Again</button>
 
     <table id="leaderboard">
       <thead>
