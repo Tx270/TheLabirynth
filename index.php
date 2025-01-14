@@ -1,6 +1,6 @@
 <?php
 
-if($_POST['username']) {
+if(isset($_POST['username'])) {
   $config = require $_SERVER['DOCUMENT_ROOT'] . '/php/config.php';
   echo "<!DOCTYPE html><html lang='en'><head> <script> const usr = '".$_POST['username']."'; const maxStage = ".$config['MAX_STAGE']."; </script>";
   if($_POST['channelName']) {

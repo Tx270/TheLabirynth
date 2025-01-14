@@ -2,7 +2,11 @@ var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--s
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
 var pusher = new Pusher('53aff91618915dd8f529', { cluster: 'eu' });
 var startTime, stop = false, maze, stage = 1, entrancePos = 3, subdiv = defSubdiv, lastMsg, multiplayer = multiplayer || false;
-const player = new Character("defult", document.getElementById("player"));
+const player = new Character("player", document.getElementById("player")), oponent = new Character("oponent", document.getElementById("oponent"));
+if(multiplayer) {
+  const oponent = new Character("deafult", document.getElementById("oponent"));
+}
+console.log(oponent);
 if(typeof usr !== "undefined") player.username = usr;
 const sfx = {
   explosion: new Audio('/assets/sfx/explosion.wav'),
@@ -187,23 +191,12 @@ function bindPlayerMovment() {
     Mousetrap.unbind(["down", "s", "up", "w", "right", "d", "left", "a", "c"]);
   });
 
-  function dziecoBomby(){
-    if(player.numofbc !== 0 && maze[player.y + player.dy][player.x + player.dx] === 0 && (player.y + player.dy !== subdiv-1 && player.y + player.dy !== 0) && (player.x + player.dx !== subdiv-1 && player.x + player.dx !== 0)) {
-      maze[player.y + player.dy][player.x + player.dx] = 1;
-      player.numofbc = 0;
-      sfx.explosion.play();
-      document.querySelector('#maze :nth-child(' + (((player.y + player.dy)*subdiv) + (player.x + player.dx) + (2)) + ')').style.backgroundImage = "none";
-      document.getElementById("bombs").innerHTML = player.numofbc + " | 1";
-    }
-  }
-
-
   Mousetrap.bind(["down", "s"], () => player.move(0, 1), 'keyup');
   Mousetrap.bind(["up", "w"], () => player.move(0, -1), 'keyup');
   Mousetrap.bind(["right", "d"], () => player.move(1, 0), 'keyup');
   Mousetrap.bind(["left", "a"], () => player.move(-1, 0), 'keyup');
 
-  Mousetrap.bind(["space", "c"], () => dziecoBomby(), 'keydown');
+  Mousetrap.bind(["space", "c"], () => player.dziecioBomba(), 'keydown');
 
   window.addEventListener("resize", () => {
     size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
@@ -265,17 +258,14 @@ function joiningRoom(event) {
   sendMessage(player.username, document.getElementById('channel').value, 'joined');
   var channel = pusher.subscribe(document.getElementById('channel').value);
 
-  var stop = false;
   channel.bind("ok", function(data) { 
     if(data.username === player.username || data.message !== player.username) return;
     document.getElementById('startForm').submit();
   });
 
   setTimeout(() => {
-    if (!stop) {
-      channel.unbind("ok");
-      alert("Nie udało się dołączyć do pokoju");
-    }
+    channel.unbind("ok");
+    alert("Nie udało się dołączyć do pokoju");
   }, 5000);
 }
 
@@ -351,6 +341,11 @@ function messageMove(data) {
   player.move(parseInt(data.message.split(",")[0]), parseInt(data.message.split(",")[1]), false);
 };
 
+function messageBomb(data) {
+  if(data.username === player.username) return;
+  player.dziecioBomba(false);
+}
+
 // ####################################################
 
 function music() {
@@ -399,6 +394,8 @@ function main() {
       if(multiplayer) {
         var channel = pusher.subscribe(channelName);
         channel.bind('move', messageMove);
+        channel.bind('bomb', messageBomb);
+
         alert("You are in the room: " + channelName);
       }
       preloadTextures();
