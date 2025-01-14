@@ -1,6 +1,7 @@
 var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
 var startTime, stop = false, maze, stage = 1, entrancePos = 3, subdiv = defSubdiv;
+const sprites = {player: 'url("/assets/player.png")', michal: 'url("/assets/michal.png")'};
 
 const player = {
   x: 0,
@@ -340,6 +341,16 @@ async function writeScore() {
   }
 }
 
+function toggleMichal(checked) {
+  try {
+    Cookies.set('sprite', checked ? 'michal' : 'player');
+    player.sprite.style.backgroundImage = checked ? sprites.michal : sprites.player;
+  }
+  catch (err) {
+    console.log('Error toggling Michal:', err);
+  }
+}
+
 // ####################################################
 
 function music() {
@@ -369,7 +380,6 @@ function toggleSound() {
     document.getElementById("volume").value = "0";
     document.getElementById("sound").src = "/assets/ui/mute.png";
   }
-  
 }
 
 // ####################################################
@@ -381,6 +391,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.insertAdjacentHTML('afterbegin', html);
       setVolume(sfx.volume);
       document.getElementById("volume").value = sfx.volume;
+      document.getElementById("michal").checked = Cookies.get("sprite") === "michal";
       main();
     })
     .catch(error => console.error('Error loading data:', error));
@@ -389,6 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function main() {
   switch (file) {
     case "game":
+      player.sprite.style.backgroundImage = Cookies.get("sprite") === "michal" ? sprites.michal : sprites.player;
       preloadTextures();
       bindPlayerMovment();
       draw(true);

@@ -126,7 +126,7 @@ th, td {
 }
 
 .player {
-  background-image: url('player.png');
+  background-image: url('/assets/player.png');
   position: absolute;
   z-index: -10;
   opacity: 0;
@@ -266,11 +266,67 @@ input[type='range'] {
   -webkit-appearance: none !important;
   background: var(--color);
   height: 10px;
+  margin-bottom: 80px;
 }
 
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none !important;
-  background: #755401;
+  background: #5f4400;
   height: 20px;
   width: 15px;
+}
+
+/* w3shools checkbox */
+
+.container {
+  position: relative;
+  top: -26px;
+  left: 150px;
+  display: block;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  margin-bottom: 40px;
+}
+
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: var(--color);
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid #5f4400;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
