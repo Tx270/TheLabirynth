@@ -14,8 +14,9 @@
 
 <div id="settings">
   <span class="close" onclick="document.getElementById('settings').style.display = 'none';">x</span>
-  <h1>Set the ings!</h1>
-  <p>Immediately</p>
+  <h1>Settings</h1>
+  <label for="volume">Volume</label>
+  <input type="range" id="volume" name="volume" min="0" max="1" step="0.01" oninput="setVolume(this.value)">
 </div>
 
 <div id="options">

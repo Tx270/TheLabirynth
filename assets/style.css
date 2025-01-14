@@ -5,6 +5,7 @@
   --subdiv: 11;
   --color: #929992;
   --bc-color: #201208;
+  --color-hover: #686b68;
 }
 
 @font-face {
@@ -54,7 +55,7 @@ main {
   margin-bottom: 70px;
 }
 #startForm button:hover {
-  border: solid #686b68 2px;
+  border: solid var(--color-hover) 2px;
 }
 
 #startForm h1 {
@@ -227,22 +228,49 @@ th, td {
   filter: brightness(0.8);
 }
 
-#help h1, #settings h1 {
+#help h1 {
   font-size: 60px;
   margin-bottom: 40px;
 }
 
-#help h2, #settings h3 {
+#settings h1 {
+  font-size: 60px;
+  margin-bottom: 70px;
+}
+
+#help h2 {
   font-size: 30px;
   margin-bottom: 25px;
 }
 
-#help h3, #settings h3 {
+#help h3 {
   font-size: 25px;
   margin-bottom: 20px;
 }
 
-#help h4, #settings p {
+#help h4 {
   font-size: 15px;
   margin-bottom: 20px;
+}
+
+#settings label {
+  width: 24%;
+  font-size: 25px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+input[type='range'] {
+  width: 25%;
+  appearance: none;
+  -webkit-appearance: none !important;
+  background: var(--color);
+  height: 10px;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none !important;
+  background: #755401;
+  height: 20px;
+  width: 15px;
 }

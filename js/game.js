@@ -351,21 +351,25 @@ function music() {
 }
 
 function setVolume(volume) {
+  sfx.volume = volume;
   Object.keys(sfx).forEach(key => {
     sfx[key].volume = volume;
   });
+  if(volume === "0") document.getElementById("sound").src = "/assets/ui/mute.png"; else document.getElementById("sound").src = "/assets/ui/sound.png";
   Cookies.set("volume", volume);
 }
 
 function toggleSound() {
   if(sfx.volume === "0") {
-    sfx.volume = "0.5";
+    setVolume("0.5");
+    document.getElementById("volume").value = "0.5";
     document.getElementById("sound").src = "/assets/ui/sound.png";
   } else {
-    sfx.volume = "0";
+    setVolume("0");
+    document.getElementById("volume").value = "0";
     document.getElementById("sound").src = "/assets/ui/mute.png";
   }
-  setVolume(sfx.volume);
+  
 }
 
 // ####################################################
@@ -376,7 +380,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(html => {
       document.body.insertAdjacentHTML('afterbegin', html);
       setVolume(sfx.volume);
-      if(sfx.volume === "0") document.getElementById("sound").src = "/assets/ui/mute.png";
+      document.getElementById("volume").value = sfx.volume;
       main();
     })
     .catch(error => console.error('Error loading data:', error));
