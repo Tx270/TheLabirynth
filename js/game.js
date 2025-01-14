@@ -30,6 +30,7 @@ async function newStage() {
   document.getElementById("maze").innerHTML = '<div class="player" id="player"></div>';
   player.sprite = document.getElementById("player");
   player.sprite.style.transition = "left 0ms, top 0ms";
+  player.sprite.style.backgroundImage = Cookies.get("sprite") === "michal" ? sprites.michal : sprites.player;
 
   if(stage != maxStage) {
     if(stage%2) {
