@@ -215,35 +215,32 @@ class MazeBuilder {
   
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
-        if (this.maze[r][c] === 2 || this.maze[r][c] === 3) {
-          if (!entrance) {
-            entrance = [r, c];
-          } else {
-            exit = [r, c];
-          }
+        if (this.maze[r][c] === 2) {
+          entrance = [r, c];
+        } else if (this.maze[r][c] === 3) {
+          exit = [r, c];
         }
       }
     }
-  
-    function bfs(start) {
+    function bfs(start, rows, cols, maze) {
       const queue = [start];
       const distances = Array.from({ length: rows }, () => Array(cols).fill(Infinity));
       distances[start[0]][start[1]] = 0;
-  
+    
       const directions = [
         [0, 1],
         [1, 0],
         [0, -1],
         [-1, 0]
       ];
-  
+    
       while (queue.length > 0) {
         const [x, y] = queue.shift();
-  
+    
         for (const [dx, dy] of directions) {
           const nx = x + dx;
           const ny = y + dy;
-  
+    
           if (nx >= 0 && nx < rows && ny >= 0 && ny < cols && maze[nx][ny] === 1) {
             if (distances[nx][ny] === Infinity) {
               distances[nx][ny] = distances[x][y] + 1;
@@ -252,19 +249,25 @@ class MazeBuilder {
           }
         }
       }
-  
+    
       return distances;
     }
+    
   
-    const distancesFromEntrance = bfs(entrance);
-    const distancesFromExit = bfs(exit);
+    // Dodajemy sprawdzenie, czy znaleźliśmy wejście i wyjście
+    if (!entrance || !exit) {
+      throw new Error("Entrance or exit not found in the maze.");
+    }
+  
+    const distancesFromEntrance = bfs(entrance, rows, cols, this.maze);
+    const distancesFromExit = bfs(exit, rows, cols, this.maze);
   
     let maxDistance = -1;
     let furthestPoint = null;
   
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
-        if (maze[r][c] === 1) {
+        if (this.maze[r][c] === 1) {
           const distance = Math.min(distancesFromEntrance[r][c], distancesFromExit[r][c]);
           if (distance > maxDistance) {
             maxDistance = distance;
@@ -276,6 +279,7 @@ class MazeBuilder {
   
     return furthestPoint;
   }
+  
 
   placeKey() {
   

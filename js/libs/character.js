@@ -1,7 +1,7 @@
 class Character {
-  constructor(username, sprite) {
+  constructor(username) {
     this.username = username;
-    this.sprite = sprite;
+    this.sprite;
     this.x = 0;
     this.y = 0;
     this.dx = 0;
@@ -10,7 +10,6 @@ class Character {
   }
   
   move(dx, dy, send = true) {
-    if (send && multiplayer) sendMessage(dx + "," + dy, channelName, "move");
     const newX = this.x + dx;
     const newY = this.y + dy;
     this.dx = dx;
@@ -18,12 +17,14 @@ class Character {
     this.sprite.style.rotate = getRotationAngle(dy, dx) + "deg";
   
     if ( newX >= 0 && newX < subdiv && newY >= 0 && newY < subdiv && [1, 4, 5, 6].includes(maze[newY]?.[newX]) ) {
-    this.x = newX;
-    this.y = newY;
-    this.sprite.style.top = this.y * (size / subdiv) + "px";
-    this.sprite.style.left = this.x * (size / subdiv) + "px";
-    this.checkSpecial();
+      this.x = newX;
+      this.y = newY;
+      this.sprite.style.top = this.y * (size / subdiv) + "px";
+      this.sprite.style.left = this.x * (size / subdiv) + "px";
+      this.checkSpecial();
     }
+
+    if (send && multiplayer) sendMessage(this.x + "," + this.y + "/" + this.dx + "," + this.dy, channelName, "move");
   }
   
   checkSpecial() {
@@ -51,8 +52,8 @@ class Character {
     maze[player.y + player.dy][player.x + player.dx] = 1;
     player.numofbc = 0;
     sfx.explosion.play();
-    document.querySelector('#maze :nth-child(' + (((player.y + player.dy)*subdiv) + (player.x + player.dx) + (2)) + ')').style.backgroundImage = "none";
+    document.querySelector('#maze :nth-child(' + (((player.y + player.dy)*subdiv) + (player.x+1 + player.dx) + (2)) + ')').style.backgroundImage = "none";
     document.getElementById("bombs").innerHTML = player.numofbc + " | 1";
     }
   }
-  }
+}

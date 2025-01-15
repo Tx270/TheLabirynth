@@ -6,6 +6,11 @@ if(isset($_POST['username'])) {
   if($_POST['channelName']) {
     echo "<script> const channelName = '".$_POST['channelName']."'; var multiplayer = true; </script>";
   }
+  if(isset($_POST['isHost'])) {
+    echo "<script> const isHost = true; </script>";
+  } else {
+    echo "<script> const isHost = false; </script>";
+  }
   echo file_get_contents('game.html');
 } else {
   header('Location: start/');

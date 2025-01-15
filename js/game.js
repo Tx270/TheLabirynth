@@ -1,12 +1,9 @@
 var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
 var pusher = new Pusher('53aff91618915dd8f529', { cluster: 'eu' });
-var startTime, stop = false, maze, stage = 1, entrancePos = 3, subdiv = defSubdiv, lastMsg, multiplayer = multiplayer || false;
-const player = new Character("player", document.getElementById("player")), oponent = new Character("oponent", document.getElementById("oponent"));
-if(multiplayer) {
-  const oponent = new Character("deafult", document.getElementById("oponent"));
-}
-console.log(oponent);
+var startTime, stop = false, maze, stage = 1, entrancePos = 3, subdiv = defSubdiv, lastMsg, first = true, multiplayer = multiplayer || false;
+const player = new Character("default");
+const oponent = multiplayer ? new Character("default") : null;
 if(typeof usr !== "undefined") player.username = usr;
 const sfx = {
   explosion: new Audio('/assets/sfx/explosion.wav'),
@@ -49,67 +46,70 @@ async function newStage() {
   }
 }
 
-function draw(first = false) {
-  // generate a *good* maze
-  let m = [], s = 0;
-  do {
-    mazeObj = new MazeBuilder((subdiv-1)/2, (subdiv-1)/2, entrancePos);
-    mazeObj.maze.forEach(e => { m.push(e[e.length-1]); });
-    s++;
-  } while (!m.every((val, i, arr) => val === arr[0]) && s < 10 && 0);
-  if(s==10) alert("failed to generate a good labyrinth!");
+function draw(maze = null) {
+  if(!maze) {
+    // generate a *good* maze
+    let m = [], s = 0;
+    do {
+      mazeObj = new MazeBuilder((subdiv-1)/2, (subdiv-1)/2, entrancePos);
+      mazeObj.maze.forEach(e => { m.push(e[e.length-1]); });
+      s++;
+    } while (!m.every((val, i, arr) => val === arr[0]) && s < 10 && 0);
+    if(s==10) alert("Failed to generate a good maze! Try refreshing.");
 
-  maze = mazeObj.maze;
-  entrancePos = mazeObj.exitPos;
-  mazeObj.placeKey();
+    maze = mazeObj.maze;
+    entrancePos = mazeObj.exitPos;
+    mazeObj.placeKey();
+  }
+
+  if(multiplayer && isHost) sendMessage(maze, channelName, "maze");
   
   // display the maze
   maze.forEach(row => {
-  row.forEach(tile => {
-    const e = document.createElement("div");
-    e.classList.add("tile");
+    row.forEach(tile => {
+      const e = document.createElement("div");
+      e.classList.add("tile");
 
-    switch (tile) {
-      case 0:
-        e.style.backgroundImage = "url('assets/tiles/wall" + randomTileNumberWeighted() + ".png')";
-        break;
-      case 1:
-        break;
-      case 2:
-        if(!first) {
-          e.style.backgroundImage = "url('assets/tiles/door_closing.gif')";
-          setTimeout(() => {
-            e.style.backgroundImage = "url('assets/tiles/door_closed.png')";
-          }, 800);
-        } else {
+      switch (tile) {
+        case 0:
           e.style.backgroundImage = "url('assets/tiles/wall" + randomTileNumberWeighted() + ".png')";
-        }
-        break;
-      case 3:
-        e.style.backgroundImage = "url('assets/tiles/door_closed.png')";
-        e.id = "door";
-        break;
-      case 4:
-        e.style.backgroundImage = "url('assets/key.gif')";
-        e.id = "key";
-        break;
-      case 5:
-        e.style.backgroundImage = "url('assets/coin.gif')";
-        e.classList.add("coin");
-        break;
-    }
+          break;
+        case 1:
+          break;
+        case 2:
+          if(!first) {
+            e.style.backgroundImage = "url('assets/tiles/door_closing.gif')";
+            setTimeout(() => {
+              e.style.backgroundImage = "url('assets/tiles/door_closed.png')";
+            }, 800);
+          } else {
+            e.style.backgroundImage = "url('assets/tiles/wall" + randomTileNumberWeighted() + ".png')";
+          }
+          break;
+        case 3:
+          e.style.backgroundImage = "url('assets/tiles/door_closed.png')";
+          e.id = "door";
+          break;
+        case 4:
+          e.style.backgroundImage = "url('assets/key.gif')";
+          e.id = "key";
+          break;
+        case 5:
+          e.style.backgroundImage = "url('assets/coin.gif')";
+          e.classList.add("coin");
+          break;
+      }
 
-    document.getElementById("maze").appendChild(e);
-    
-  });
+      document.getElementById("maze").appendChild(e);
+    });
   });
 
   // Place the player under the entrance
-  player.sprite.style.left = maze[0].findIndex((e) => e == 2) * (size/subdiv) + "px";
-  player.sprite.style.top = "0px";
-
   player.x = maze[0].findIndex((e) => e == 2);
   player.y = 1;
+
+  player.sprite.style.left = player.x * (size/subdiv) + "px";
+  player.sprite.style.top = "0px";
 
   if(!first) {
     // animate player at start
@@ -124,7 +124,9 @@ function draw(first = false) {
     player.sprite.style.opacity = "1";
   }
   setTimeout(() => { player.sprite.style.transition = "left 100ms, top 100ms"; }, 250);
-
+  
+  first = false;
+  return maze;
 }
 
 // ####################################################
@@ -338,12 +340,25 @@ function sendMessage(message, chName, event) {
 
 function messageMove(data) {
   if(data.username === player.username) return;
-  player.move(parseInt(data.message.split(",")[0]), parseInt(data.message.split(",")[1]), false);
+  // player.move(parseInt(data.message.split(",")[0]), parseInt(data.message.split(",")[1]), false);
+  player.x = parseInt(data.message.split("/")[0].split(",")[0]);
+  player.y = parseInt(data.message.split("/")[0].split(",")[1]);
+  player.dx = parseInt(data.message.split("/")[1].split(",")[0]);
+  player.dy = parseInt(data.message.split("/")[1].split(",")[1]);
+  player.sprite.style.top = player.y * (size / subdiv) + "px";
+  player.sprite.style.left = player.x * (size / subdiv) + "px";
+  player.sprite.style.rotate = getRotationAngle(player.dy, player.dx) + "deg";
+  player.checkSpecial();
 };
 
 function messageBomb(data) {
   if(data.username === player.username) return;
   player.dziecioBomba(false);
+}
+
+function messageMaze(data) {
+  if(data.username === player.username) return;
+  maze = draw(data.message);
 }
 
 // ####################################################
@@ -395,12 +410,16 @@ function main() {
         var channel = pusher.subscribe(channelName);
         channel.bind('move', messageMove);
         channel.bind('bomb', messageBomb);
-
-        alert("You are in the room: " + channelName);
+        if(!isHost) {
+          sendMessage(player.username, channelName, "joined");
+          channel.bind('maze', messageMaze);
+        }
+        document.getElementById("maze").innerHTML = '<div class="player" id="player"></div><div class="player" id="oponent"></div>';
       }
+      player.sprite = document.getElementById("player");
+      if(!multiplayer || (multiplayer && isHost)) channel.bind("joined", (data) => { maze = draw(); });
       preloadTextures();
       bindPlayerMovment();
-      draw(true);
       document.getElementById("bombs").innerText = "1 | 1";
       document.getElementById("stage").innerText = "1 | " + maxStage;
       music();
