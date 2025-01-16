@@ -30,19 +30,21 @@ class Character {
   checkSpecial() {
     var pos = maze[this.y][this.x];
     if (pos === 4) {
-    maze[this.y][this.x] = 1;
-    maze[maze.length - 1][maze[maze.length - 1].findIndex((e) => e === 3)] = 6;
-    document.getElementById("key").style.opacity = "0";
-    sfx.coin.play();
-    document.getElementById("door").style.backgroundImage = "url('assets/tiles/door_opening.gif')";
-    setTimeout(() => { 
-      document.getElementById("door").style.backgroundImage = "url('assets/tiles/door_open.png')"; 
-    }, 800);
+      maze[this.y][this.x] = 1;
+      maze[maze.length - 1][maze[maze.length - 1].findIndex((e) => e === 3)] = 6;
+      document.getElementById("key").style.opacity = "0";
+      sfx.coin.play();
+      document.getElementById("door").style.backgroundImage = "url('assets/tiles/door_opening.gif')";
+      setTimeout(() => { 
+        document.getElementById("door").style.backgroundImage = "url('assets/tiles/door_open.png')"; 
+      }, 800);
+      key = true;
     } else if (pos === 6 && key) {
-    if(stage != maxStage) sfx.win.play();
-    this.sprite.style.opacity = "0";
-    this.sprite.style.transition = "left 200ms, top 200ms";
-    setTimeout(newStage, 200);
+      key = false;
+      if(stage != maxStage) sfx.win.play();
+      this.sprite.style.opacity = "0";
+      this.sprite.style.transition = "left 200ms, top 200ms";
+      setTimeout(newStage, 200);
     }
   }
 

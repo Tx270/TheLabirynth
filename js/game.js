@@ -1,7 +1,7 @@
 var defSubdiv = getComputedStyle(document.documentElement).getPropertyValue('--subdiv');
 var size = viewportToIntPixels(getComputedStyle(document.documentElement).getPropertyValue('--size'));
 var pusher = new Pusher('53aff91618915dd8f529', { cluster: 'eu' });
-var startTime, stop = false, maze, stage = 1, entrancePos = 3, subdiv = defSubdiv, lastMsg, first = true, multiplayer = multiplayer || false;
+var startTime, stop = false, maze, stage = 1, entrancePos = 3, subdiv = defSubdiv, lastMsg, first = true, multiplayer = multiplayer || false, key = false;
 const player = new Character("default");
 const oponent = multiplayer ? new Character("default") : null;
 if(typeof usr !== "undefined") player.username = usr;
@@ -21,7 +21,7 @@ if(Cookies.get("volume")) sfx.volume = Cookies.get("volume"); else Cookies.set("
 async function newStage() {
   player.numofbc = 1;
   document.getElementById("bombs").innerHTML = player.numofbc + " | 1";
-  document.getElementById("maze").innerHTML = '<div class="player" id="player"></div>';
+  document.getElementById("maze").innerHTML = '<div class="player" id="player"></div><div class="player" id="oponent"></div>';
   player.sprite = document.getElementById("player");
   player.sprite.style.transition = "left 0ms, top 0ms";
 
@@ -33,7 +33,10 @@ async function newStage() {
     }
     stage++;
     document.getElementById("stage").innerText = stage + " | " + maxStage;
-    draw();
+    // if(isHost) draw();
+    if(!isHost && multiplayer) {
+      sendMessage(player.username, channelName, "joined");
+    }
   } else {
     stop = true;
     let scr = Math.round(Date.now() / 1000)-startTime;
@@ -406,33 +409,11 @@ document.addEventListener("DOMContentLoaded", () => {
 function main() {
   switch (file) {
     case "game":
-      if(multiplayer) {
-        var channel = pusher.subscribe(channelName);
-        channel.bind('move', messageMove);
-        channel.bind('bomb', messageBomb);
-        if(!isHost) {
-          sendMessage(player.username, channelName, "joined");
-          channel.bind('maze', messageMaze);
-        }
-        document.getElementById("maze").innerHTML = '<div class="player" id="player"></div><div class="player" id="oponent"></div>';
-      }
-      player.sprite = document.getElementById("player");
-      if(!multiplayer || (multiplayer && isHost)) channel.bind("joined", (data) => { maze = draw(); });
-      preloadTextures();
-      bindPlayerMovment();
-      document.getElementById("bombs").innerText = "1 | 1";
-      document.getElementById("stage").innerText = "1 | " + maxStage;
-      music();
+      var channel = caseGame();
       break;
     case "create":
-      window.channelName = generateUUID();
-      document.getElementById('channelName').value = window.channelName;
-      var channel = pusher.subscribe(window.channelName);
-      channel.bind('joined', function(data) {
-        if(data.username === player.username) return;
-        sendMessage(data.username, window.channelName, "ok"); 
-        document.getElementById('startForm').submit();
-      });
+      var channel = caseCreate();
+      break;
     case "join":
       document.getElementById('username').value = player.username;
       break;
@@ -446,5 +427,38 @@ function main() {
       document.getElementById("maxStage").innerText = maxStage;
       document.getElementById("username").value = Cookies.get('username') ?? "";
       break;
+  }
+
+  function caseGame() {
+    if (multiplayer) {
+      var channel = pusher.subscribe(channelName);
+      channel.bind('move', messageMove);
+      channel.bind('bomb', messageBomb);
+      if (!isHost) {
+        sendMessage(player.username, channelName, "joined");
+        channel.bind('maze', messageMaze);
+      }
+      document.getElementById("maze").innerHTML = '<div class="player" id="player"></div><div class="player" id="oponent"></div>';
+    }
+    player.sprite = document.getElementById("player");
+    if (!multiplayer || (multiplayer && isHost)) channel.bind("joined", (data) => { maze = draw(); });
+    preloadTextures();
+    bindPlayerMovment();
+    document.getElementById("bombs").innerText = "1 | 1";
+    document.getElementById("stage").innerText = "1 | " + maxStage;
+    music();
+    return channel;
+  }
+
+  function caseCreate() {
+    window.channelName = generateUUID();
+    document.getElementById('channelName').value = window.channelName;
+    var channel = pusher.subscribe(window.channelName);
+    channel.bind('joined', function (data) {
+      if (data.username === player.username) return;
+      sendMessage(data.username, window.channelName, "ok");
+      document.getElementById('startForm').submit();
+    });
+    return channel;
   }
 }
