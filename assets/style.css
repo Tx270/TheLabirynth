@@ -254,6 +254,10 @@ th, td {
   margin-bottom: 20px;
 }
 
+#help hr {
+  width: 40%;
+}
+
 #settings label {
   width: 24%;
   font-size: 25px;
