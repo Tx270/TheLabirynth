@@ -6,6 +6,7 @@ The Labyrinth is a web-based maze game where players navigate through multiple s
 
 - [Technologies Used](#technologies-used)
 - [Features](#features)
+- [Config](#config-file)
 - [Future Development](#future-development)
 - [Acknowledgements](#acknowledgements)
 
