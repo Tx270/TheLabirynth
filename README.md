@@ -6,6 +6,8 @@ The Labyrinth is a web-based maze game where players navigate through multiple s
 
 - [Technologies Used](#technologies-used)
 - [Features](#features)
+- [Config](#config-file)
+- [Future Development](#future-development)
 - [Acknowledgements](#acknowledgements)
 
 ## Technologies Used
@@ -20,7 +22,33 @@ The Labyrinth is a web-based maze game where players navigate through multiple s
 - **Maze Generation** - The game uses the recursive division method to create random mazes for each level. The `MazeBuilder` class handles the creation of the maze layout.
 - **Leaderboard** - The game tracks the time taken by each player to complete the maze and stores the scores in a MySQL database. The leaderboard displays the top scores.
 
+## Config file
+
+Db, language and max stage info is stored in /php/config.php:
+````php
+<?php
+return [
+    'DB_HOST' => '',
+    'DB_NAME' => '',
+    'DB_USER' => '',
+    'DB_PASS' => '',
+    'DB_CHARSET' => '',
+    'BASE_URL' => '',
+    'DEF_LANG' => '',
+    'MAX_STAGE' => 8,
+];
+````
+
+## Future Development
+
+We are now working on adding multiplayer through [Pusher](https://pusher.com/). Check out the progress in the multiplayer branch.
+
 ## Acknowledgements
+
+Thanks to the voluntary stress testers who fearlessly brake this game time after time:
+
+- [ArtiChaos](https://github.com/ArtiFact-Code)
+- [Marcelunio](https://github.com/Marcelunio)
 
 These are the libraries and tools used in this project:
 
